@@ -1,0 +1,23 @@
+{
+  "eslint.packageManager": "pnpm",
+  "prettier.vueIndentScriptAndStyle": true,
+  "prettier.singleQuote": true,
+  "prettier.jsxSingleQuote": true,
+  "prettier.printWidth": 120,
+  "editor.formatOnPaste": true,
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2,
+  "volar.format.initialIndent": {
+    "typescript": true,
+    "javascript": true,
+    "typescriptreact": true,
+    "javascriptreact": true,
+    "css": true,
+    "scss": true,
+    "json": true,
+    "jsonc": true,
+    "html": true
+  },
+  "volar.autoCompleteRefs": true,
+  "volar.doctor.checkVueTsc": true,
+}
