@@ -1,0 +1,153 @@
+.right{
+    float: right;
+    width: 18%;
+    height: 100%;
+    margin-top: 100px;
+}
+
+.left {
+    float: left;
+    width: 80%;
+}
+
+.head_portrait{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    text-align: center;
+    line-height: 30px;
+    margin: 10px 0;
+    color: rgba(255, 255, 255, 1);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.head_message{
+    font-family: Consolas;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.interviewer_list{
+    cursor: pointer;
+    margin: 0 0 2px 0;
+}
+
+.interviewer_list:hover{
+    border-bottom: 2px solid rgba(200, 22, 35 ,1);
+    color: rgba(200, 22, 35 ,1);
+    margin: 0;
+}
+
+.reply_all{
+    padding: 20px 0 20px 0;
+}
+
+.reply_bottom{
+    border-bottom: 2px solid rgba(209,220,236,1);
+}
+
+.reply_all .name, .reply_all .to{
+    display: inline-block;
+    color: rgba(109,117,122,1);
+    margin: 0 0 10px 0;
+    font-weight: bolder;
+}
+
+.reply_all .name{
+    text-indent: 5px;
+    cursor:pointer;
+}
+
+.reply_all .to{
+    text-indent: 3em;
+}
+
+.reply_all .name:hover{
+    color: rgba(24,144,255,1);
+}
+
+.reply_all .reply{
+    line-height: 20px;
+    font-size: 14px;
+    text-shadow: none;
+    text-indent: 0;
+    overflow: hidden;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+    cursor: text;
+}
+
+.reply_all .time{
+    display: inline-block;
+    text-indent: 35px;
+    color: rgba(153, 162, 170, 1);
+    margin: 10px 20px 0 0;
+    cursor: text;
+}
+
+.reply_all .reply_back{
+    display: inline-block;
+    color: rgba(153, 162, 170, 1);
+    cursor: pointer;
+    width: 30px;
+    height: 26px;
+    text-align: center;
+    line-height: 26px;
+    border-radius: 8px;
+}
+
+.reply_all .reply_back:hover{
+    color: rgba(255,255,255,1);
+    background-color: rgba(46,181,61,1);
+}
+
+.reply_second{
+    margin-left: 50px;
+    border-bottom: 2px solid rgba(209,220,236,1);
+}
+
+.reply_all .reply_content{
+    width: 100%;
+    text-align: center;
+}
+
+.reply_content textarea{
+    resize: none;
+    padding: 2px 2em;
+    text-indent: 0;
+    display: inline-block;
+    width: 90%;
+    margin: 20px auto -8px;
+    border-radius: 8px;
+    font-size: 15px;
+    line-height: 2em;
+    border: 1px solid rgba(204, 204, 204, 1);
+    color:rgba(38,38,38,1);
+    background-color: rgba(244,245,247,1);
+    cursor: text;
+}
+
+.reply_content textarea:focus{
+    border: 1px solid rgba(46,181,61,1);
+}
+
+.reply_content span{
+    display: inline-block;
+}
+
+.return, .reply_content span {
+    width: 40px;
+    height: 30px;
+    border-radius: 8px;
+    line-height: 30px;
+    text-align: center;
+    margin: 30px auto 0;
+    font-size: 16px;
+    color: rgba(255,255,255,1);
+    background-color: rgba(46,181,61,1);
+    cursor: pointer;
+}

@@ -1,0 +1,36 @@
+.markdown {
+    height: 300px;
+}
+
+.markdown_content{
+    display: inline-block;
+    float: left;
+    width: 48%;
+    border-radius: 8px;
+    font-size: 15px;
+    line-height: 2em;
+    border: 1px solid rgba(204, 204, 204, 1);
+    color:rgba(38,38,38,1);
+    /*text-indent: 2em;*/
+    cursor: text;
+    resize: none;
+    padding: 0 2em;
+    margin: 10px 0 0 20px;
+}
+
+.markdown_content:focus
+{
+    border: 1px solid rgba(46,181,61,1);
+}
+
+.md-body{
+    display: inline-block;
+    float: right;
+    width: 90%;
+    height: 242px;
+    margin: 10px 20px 0 0;
+    padding: 2px;
+    border-radius: 8px;
+    border: 1px solid rgba(204, 204, 204, 1);
+    text-indent: 0;
+}

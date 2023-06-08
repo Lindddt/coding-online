@@ -20,4 +20,6 @@
   },
   "volar.autoCompleteRefs": true,
   "volar.doctor.checkVueTsc": true,
+  "volar.wrap_attributes": true,
+  "html.format.wrapAttributes": "force-expand-multiline",
 }

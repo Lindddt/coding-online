@@ -1,0 +1,44 @@
+.right{
+    float: right;
+    width: 20%;
+    height: 100%;
+    margin-top: 100px;
+}
+
+.left {
+    float: left;
+    width: 77%;
+    margin-bottom: 50px;
+}
+
+.index{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    text-align: center;
+    line-height: 30px;
+    margin: 10px 0;
+    color: rgba(255, 255, 255, 1);
+    font-size: 14px;
+}
+
+.simple_message{
+    display: inline-block;
+    width: 180px;
+    height: 30px;
+    font-size: 15px;
+    margin: -13px auto;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.simple_message:hover{
+    border-bottom: 2px solid rgba(200, 22, 35 ,1);
+    color: rgba(200, 22, 35 ,1);
+}
+
+
+
