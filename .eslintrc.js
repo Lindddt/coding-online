@@ -26,6 +26,8 @@ module.exports = {
     // 你的全局变量（设置为 false 表示它不允许被重新赋值）
     //
     // myGlobal: false
+    '$fetch': true,
+    'NodeJS': true,
   },
   // 'parser': '@babel/eslint-parser',
   // 'parserOptions': {
@@ -65,6 +67,6 @@ module.exports = {
     }],
     'vue/comment-directive': 'off',
     'vue/no-v-model-argument': 'off',
-
+    'no-lone-blocks': 'off',
   },
 };

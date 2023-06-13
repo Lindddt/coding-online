@@ -2,8 +2,11 @@
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "jsx": "preserve",
+    "jsxImportSource": "vue",
     "jsxFactory": "h",
     "jsxFragmentFactory": "Fragment",
+    "target": "es5",
+    "module": "commonjs",
   },
   "types": [
     "naive-ui/volar"

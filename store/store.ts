@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import * as getters from './getters';
-import axios from 'axios';
 
 export interface StoreI {
   currentUser: string;

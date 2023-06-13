@@ -1,9 +1,7 @@
 import { defineNuxtConfig } from 'nuxt/config';
 import vueJsx from '@vitejs/plugin-vue-jsx';
-import vue from '@vitejs/plugin-vue';
 
 export default defineNuxtConfig({
-  ignore: ['old/**/*'],
   build: {
     transpile:
       process.env.NODE_ENV === 'production'
@@ -14,6 +12,30 @@ export default defineNuxtConfig({
           '@juggle/resize-observer'
         ]
         : ['@juggle/resize-observer']
+  },
+  ignore: [
+    '**/*.test.*',
+    '**/*.spec.*',
+    '**/*.e2e.*',
+    '**/*.d.ts',
+    'old/**/*',
+    'koa/**/*',
+    'routes/**/*',
+  ],
+  nitro: {
+    devProxy: {
+      '/backend/': {
+        target: 'http://localhost:9090/',
+        prependPath: true,
+        changeOrigin: true,
+      }
+    },
+    // 该配置用于服务端请求转发
+    routeRules: {
+      '/backend/**': {
+        proxy: 'http://localhost:9090/**'
+      }
+    }
   },
   modules: [
     // Simple usage
@@ -53,5 +75,19 @@ export default defineNuxtConfig({
           ? ['naive-ui', 'vueuc', 'date-fns-tz/esm/formatInTimeZone']
           : []
     },
-  }
+    esbuild: {
+      jsxInject: 'import React from \'react\'',
+    },
+    css: {
+      // 预处理器配置项
+      preprocessorOptions: {
+        less: {
+          math: 'always',
+        },
+      },
+    },
+  },
+  devServer: {
+    port: 2333,
+  },
 });

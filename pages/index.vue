@@ -45,7 +45,7 @@
       >
         <n-card
           style="width: 600px"
-          title="模态框"
+          :title="modelType === 'login' ? '登录' : '注册'"
           size="huge"
           :bordered="false"
           role="dialog"
@@ -65,17 +65,18 @@
 </template>
 
 <script setup lang='ts'>
-  import axios from 'axios';
   // import { userStatus } from '@/store/mutations';
   // import { identity } from '@/store/getters';
-  import { NInput, NList, NListItem, NModal, NCard } from 'naive-ui';
-  import { ref } from 'vue';
+  import { NInput, NList, NListItem, NModal, NCard, FormItemRule } from 'naive-ui';
+  import { ref, watchEffect, watch, h, resolveComponent } from 'vue';
   import qs from 'qs';
   import { sendMessage, Message } from '~/utils';
   import { FormFieldConfig } from '~/components';
   // import CustomForm from '~/components/Form/CustomForm.vue';
-  import { CustomForm } from '#components';
+  import { CustomForm, VerificationCode } from '#components';
+  // import { useFetch } from 'nuxt';
   console.log('Hello from the homepage');
+  const VerificationCodeComp = resolveComponent('VerificationCode');
   const indexRouter = [
     {
       id: 0,
@@ -93,6 +94,10 @@
       router: '/message_board'
     },
   ];
+
+  const res = await $fetch('/api/hello');
+  console.log(res);
+
   const isRegisterLoginShow = ref(true);
   const isLoginUserShow = ref(false);
   const isLoginShow = ref(false);
@@ -122,7 +127,7 @@
   const modelType = ref<'login' | 'register'>('login');
   const showModal = ref(false);
   const auth_time = ref(30);
-  const formConfigList: FormFieldConfig[] = [
+  const formConfigList = ref<FormFieldConfig[]>([
     {
       key: 'email',
       value: '',
@@ -130,6 +135,17 @@
       label: '邮箱',
       placeholder: '请输入邮箱',
       type: 'text',
+      rule: {
+        required: true,
+        validator: (rule: FormItemRule, value: string) => {
+          if (value.length === 0) {
+            return new Error('邮箱不能为空');
+          } else if (value.match(/^([a-zA-Z]|[0-9])(\w|)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/)) {
+            return new Error('请输入正确的邮箱地址');
+          }
+          return true;
+        },
+      }
     },
     {
       key: 'password',
@@ -138,9 +154,75 @@
       label: '密码',
       placeholder: '请输入密码',
       type: 'password',
+      rule: {
+        required: true,
+        validator: (rule: FormItemRule, value: string) => {
+          if (value.length === 0) {
+            return new Error('密码不能为空');
+          } else if (value.length < 6) {
+            return new Error('密码长度不能小于6位');
+          }
+          return true;
+        },
+      }
+    },
+    {
+      label: '验证码',
+      key: 'verification',
+      formType: 'custom',
+      render: ({ formData, changeData, validate }) => h(VerificationCodeComp, {
+        'formData': formData,
+        'emailName': 'email',
+        'itemKey': 'verification',
+        'changeData': changeData,
+        'validate': validate,
+      }),
     }
-  ];
-
+  ]);
+  watch(modelType, () => {
+    formConfigList.value = modelType.value === 'login' ? [
+      {
+        key: 'email',
+        value: '',
+        formType: 'input',
+        label: '邮箱',
+        placeholder: '请输入邮箱',
+        type: 'text',
+      },
+      {
+        key: 'password',
+        value: '',
+        formType: 'input',
+        label: '密码',
+        placeholder: '请输入密码',
+        type: 'password',
+      }
+    ] : [
+      {
+        key: 'email',
+        value: '',
+        formType: 'input',
+        label: '邮箱',
+        placeholder: '请输入邮箱',
+        type: 'text',
+      },
+      {
+        key: 'password',
+        value: '',
+        formType: 'input',
+        label: '密码',
+        placeholder: '请输入密码',
+        type: 'password',
+      },
+      // {
+      //   formType: 'custom',
+      //   render: () => {
+      //     return (
+      //     )
+      //   }
+      // },
+    ];
+  });
   const router_click = (e) => {
     console.log(e);
 
@@ -156,9 +238,10 @@
     modelType.value = 'login';
     showModal.value = true;
     console.log('clerkLogin');
+
   };
 
-  const clerkRegister = () => {
+  const clerkRegister = async () => {
     mail.value = '';
     password.value = '';
     password_repeat.value = '';
@@ -166,7 +249,15 @@
     modelType.value = 'register';
     showModal.value = true;
     console.log('clerkRegister');
-
+    const dsa = await $fetch('/api/koaAPI', {
+      method: 'POST',
+      body: {
+        path: '/verificationcode',
+        name: 'test',
+        email: 'frost_lin@outlook.com'
+      }
+    });
+    console.log(dsa, 'dsa');
   };
   const onSubmit = (formValue: Record<string, any>) => {
     if (modelType.value === 'login') {
@@ -316,36 +407,36 @@
     verificationFlag.value = 0;
     verification_send_content.value = String(auth_time) + '秒后重发';
     verification_send_get_style();
-    axios({
-      method: 'post',
-      url: '/verificationcode',
-      data:
-        qs.stringify(
-          {
-            email: (mail),
-          })
-    })
-      .then(res => {
-        // 获取数据
-        let bool = res.data.errcode;
-        let auth_code = res.data.code;
-        console.log(auth_code);
-        if (res.data.errcode === 0) {
-          console.log(res.data);
-        }
-        console.info(res);
-        if (bool === 0) {
-          sendMessage({
-            message: '获取验证码成功',
-            type: 'success'
-          });
-        } else if (bool === 1) {
-          Message.error('damedame');
-        }
-      })
-      .catch((error) => {
-        Message.error(error);
-      });
+    // axios({
+    //   method: 'post',
+    //   url: '/verificationcode',
+    //   data:
+    //     qs.stringify(
+    //       {
+    //         email: (mail),
+    //       })
+    // })
+    //   .then(res => {
+    //     // 获取数据
+    //     let bool = res.data.errcode;
+    //     let auth_code = res.data.code;
+    //     console.log(auth_code);
+    //     if (res.data.errcode === 0) {
+    //       console.log(res.data);
+    //     }
+    //     console.info(res);
+    //     if (bool === 0) {
+    //       sendMessage({
+    //         message: '获取验证码成功',
+    //         type: 'success'
+    //       });
+    //     } else if (bool === 1) {
+    //       Message.error('damedame');
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     Message.error(error);
+    //   });
     let auth_timeTimer = setInterval(() => {
       auth_time.value--;
       verification_send_content.value = String(auth_time) + '秒后重发';
@@ -361,135 +452,137 @@
   const Login = () => {
 
     if (mailIcon.value === 'icon-checkmark' && password.value.length > 0) {
-      axios.post(
-        '/login',
-        qs.stringify({
-          password: (password),
-          email: (mail)
-        })
-      )
-        .then(res => {
-          // 获取数据
-          /*            sendMessage({
-        message: res.data,
-        type: 'success'
-      }); */
-          /* console.log(res.data) */
-          if (res.data.errcode === 0) {
-            nickname.value = res.data.nickname;
-            isLoginShow.value = false;
-            isRegisterLoginShow.value = false;
-            isLoginUserShow.value = true;
-            userID.value = nickname.value;
+      // axios.post(
+      //   '/login',
+      //   qs.stringify({
+      //     password: (password),
+      //     email: (mail)
+      //   })
+      // )
+      //   .then(res => {
+      //     // 获取数据
+      //     /*            sendMessage({
+      //   message: res.data,
+      //   type: 'success'
+      // }); */
+      //     /* console.log(res.data) */
+      //     if (res.data.errcode === 0) {
+      //       nickname.value = res.data.nickname;
+      //       isLoginShow.value = false;
+      //       isRegisterLoginShow.value = false;
+      //       isLoginUserShow.value = true;
+      //       userID.value = nickname.value;
 
-            userStatus({
-              login: true,
-              mail: mail,
-              username: nickname,
-              identity: res.data.identity,
-            });
+      //       userStatus({
+      //         login: true,
+      //         mail: mail,
+      //         username: nickname,
+      //         identity: res.data.identity,
+      //       });
 
-            /* console.log(currentUser); */
-            /* console.log(email); */
-            /*              sendMessage({
-            message: '登录成功',
-            type: 'success'
-          }); */
+      //       /* console.log(currentUser); */
+      //       /* console.log(email); */
+      //       /*              sendMessage({
+      //       message: '登录成功',
+      //       type: 'success'
+      //     }); */
 
-          } else if (res.data.errcode === 1) {
-            Message.error('用户不存在');
-          } else if (res.data.errcode === 2) {
-            Message.error('密码错误');
-          }
-          else if (res.data.errcode === 3) {
-            Message.error('数据库错误');
-          }
+      //     } else if (res.data.errcode === 1) {
+      //       Message.error('用户不存在');
+      //     } else if (res.data.errcode === 2) {
+      //       Message.error('密码错误');
+      //     }
+      //     else if (res.data.errcode === 3) {
+      //       Message.error('数据库错误');
+      //     }
 
-        })
-        .catch((error) => {
-          Message.error(error);
-        });
+      //   })
+      //   .catch((error) => {
+      //     Message.error(error);
+      //   });
 
     }
   };
 
 
   const Register = () => {
-    axios({
-      method: 'post',
-      url: '/register',
-      data:
-        qs.stringify(
-          {
-            password: (password),
-            email: (mail),
-            username: (nickname),
-            verificationcode: (verification),
-            identity: (userIdentity),
-          })
-    })
-      .then(res => {
-        // 获取数据
-        if (res.data.errcode === 0) {
+    //   axios({
+
+    //     method: 'post',
+    //     url: '/register',
+    //     data:
+    //       qs.stringify(
+    //         {
+    //           password: (password),
+    //           email: (mail),
+    //           username: (nickname),
+    //           verificationcode: (verification),
+    //           identity: (userIdentity),
+    //         })
+    //   })
+    //     .then(res => {
+    //       // 获取数据
+    //       if (res.data.errcode === 0) {
 
 
-          isRegisterShow.value = false;
-          isRegisterLoginShow.value = false;
-          isLoginUserShow.value = true;
-          userID.value = nickname.value;
-          userStatus({
-            login: true,
-            mail: mail,
-            username: nickname,
-            identity: userIdentity,
-          });
+    //         isRegisterShow.value = false;
+    //         isRegisterLoginShow.value = false;
+    //         isLoginUserShow.value = true;
+    //         userID.value = nickname.value;
+    //         userStatus({
+    //           login: true,
+    //           mail: mail,
+    //           username: nickname,
+    //           identity: userIdentity,
+    //         });
 
-          sendMessage({
-            message: '注册成功',
-            type: 'success'
-          });
+    //         sendMessage({
+    //           message: '注册成功',
+    //           type: 'success'
+    //         });
 
-        } else if (res.data.errcode === 1) {
-          Message.error('用户已存在');
-        } else if (res.data.errcode === 2) {
-          Message.error('邮箱不正确');
-        } else if (res.data.errcode === 3) {
-          Message.error('验证码错误');
-        } else if (res.data.errcode === 4) {
-          Message.error('数据库操作错误');
-        }
-        else if (res.data.errcode === 5) {
-          Message.error('用户名已存在');
-        }
+    //       } else if (res.data.errcode === 1) {
+    //         Message.error('用户已存在');
+    //       } else if (res.data.errcode === 2) {
+    //         Message.error('邮箱不正确');
+    //       } else if (res.data.errcode === 3) {
+    //         Message.error('验证码错误');
+    //       } else if (res.data.errcode === 4) {
+    //         Message.error('数据库操作错误');
+    //       }
+    //       else if (res.data.errcode === 5) {
+    //         Message.error('用户名已存在');
+    //       }
 
 
-        console.info(res);
-      })
+    //       console.info(res);
+    //     })
 
-      .catch((error) => {
-        Message.error(error);
-      });
+    //     .catch((error) => {
+    //       Message.error(error);
+    //     });
 
+    // };
   };
   const Login_out = () => {
-    axios({
-      method: 'post',
-      url: '/logout',
+    // axios({
+    //   method: 'post',
+    //   url: '/logout',
 
-    })
-      .then(res => {
-        // 获取数据
-        if (res.data.errcode === 0) {
-          Message.success('退出登录');
-        }
-        else {
-          Message.error('未知错误');
-        }
+    // })
+    //   .then(res => {
+    //     // 获取数据
+    //     if (res.data.errcode === 0) {
+    //       Message.success('退出登录');
+    //     }
+    //     else {
+    //       Message.error('未知错误');
+    //     }
 
-      })
-      .catch((error) => {
-        Message.error(error);
-      });
+    //   })
+    //   .catch((error) => {
+    //     Message.error(error);
+    //   });
     userStatus({
       login: false,
     });

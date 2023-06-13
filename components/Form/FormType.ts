@@ -1,9 +1,12 @@
 import { FormItemProps, InputProps, SwitchProps } from 'naive-ui';
+import { VNodeRef } from 'vue';
 
-export interface FormConfigBase extends FormItemProps {
-  formType: 'input' | 'select' | 'radio' | 'checkbox' | 'date' | 'time' | 'datetime' | 'switch' | 'slider' | 'rate' | 'color-picker' | 'cascader' | 'upload' | 'form-item' | 'form';
+export interface FormConfigBase {
+  formType: 'input' | 'select' | 'custom' | 'switch';
   disabled?: boolean;
   key: string;
+  label?: FormItemProps['label'];
+  rule?: FormItemProps['rule'];
 }
 
 export interface InputConfig extends FormConfigBase {
@@ -28,6 +31,20 @@ export interface SwitchConfig extends FormConfigBase {
   'uncheckedContent'?: Element;
 }
 
+export interface CustomConfig extends FormConfigBase {
+  formType: 'custom';
+  value?: any;
+  render: ({
+    formData,
+    changeData,
+    validate
+  }: {
+    formData: Record<string, any>;
+    changeData: (value: any, key: string) => void;
+    validate: (keys?: string[]) => Promise<boolean>
+  }) => JSX.Element;
+}
 export type FormFieldConfig =
   InputConfig
-  | SwitchConfig;
+  | SwitchConfig
+  | CustomConfig;
