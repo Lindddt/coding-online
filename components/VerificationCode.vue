@@ -13,7 +13,7 @@
 <script setup lang='ts'>
   import { NInput, NButton, c } from 'naive-ui';
   import { ref, defineProps, watch } from 'vue';
-  import { sendMessage, Message } from '~/utils';
+  import { sendMessage } from '~/utils';
 
   const props = defineProps<{
     'formData'?: any;
@@ -21,13 +21,14 @@
     'itemKey': string
     'changeData'?: (value: string, key: string) => void;
     'validate'?: (keys?: string[]) => Promise<boolean>;
+    // 'handleClick'?: (e: MouseEvent) => void;
   }>();
   console.log(props, 'formList', props.formData);
 
   const verification = ref('');
   const verification_send_content = ref('发送验证码');
   const verificationFlag = ref(0);
-  const auth_time = ref(30000);
+  const auth_time = ref(0);
   const value = ref('');
   let startTime = new Date().getTime();
   let count = 0;
@@ -69,10 +70,12 @@
 
 
   const handleClick = async () => {
-    // console.log(props.formData, 'formRef', props.formData);
+    console.log(props.formData, 'formRef', props.formData);
     if (!props.validate?.([props.emailName || ''])) {
+      console.log('验证失败');
       return;
     }
+    console.log('验证成功');
     if (auth_time.value > 0) {
       return;
     }
@@ -90,8 +93,7 @@
         method: 'POST',
         body: {
           path: '/verificationcode',
-          name: 'test',
-          email: 'frost_lin@outlook.com'
+          email: props.formData[props.emailName || 'email']
         }
       });
       let bool = res.data.errcode || 0;
@@ -102,15 +104,13 @@
       }
       console.info(res);
       if (bool === 0) {
-        sendMessage({
-          message: '获取验证码成功',
-          type: 'success'
-        });
+        sendMessage.success('获取验证码成功',);
       }
       else if (bool === 1) {
-        Message.error('damedame');
+        sendMessage.error('damedame');
       }
     } catch (error) {
+      console.log(error);
       // let err = error || '获取验证码失败';
       // Message.error(err);
     }

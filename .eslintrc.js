@@ -27,6 +27,7 @@ module.exports = {
     //
     // myGlobal: false
     '$fetch': true,
+    '$pinia': true,
     'NodeJS': true,
   },
   // 'parser': '@babel/eslint-parser',

@@ -12,7 +12,7 @@ const koaRouter = new Router();
 
 koaRouter.use('/test', testRouter.routes(), testRouter.allowedMethods());
 
-koaRouter.use('/', homeRouter.routes(), homeRouter.allowedMethods());
+koaRouter.use('/account', homeRouter.routes(), homeRouter.allowedMethods());
 koaRouter.use('/verificationcode', verificationcode.routes(), verificationcode.allowedMethods());
 // koaRouter.use('/messageboard', messageboard);
 // koaRouter.use('/users', users);

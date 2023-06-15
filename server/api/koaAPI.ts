@@ -1,16 +1,8 @@
 
 
-export default defineEventHandler(async (event): Promise<{
-  asd: string;
-  res: any;
-  data: {
-    errcode: number;
-    [key: string]: any;
-  }
-}> => {
+export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  console.log('21das', body, event.context.params);
-
+  console.log('event', body.path);
   const res = await $fetch(`/backend/${body.path || ''}`, {
     method: 'POST',
     body: {
@@ -21,9 +13,15 @@ export default defineEventHandler(async (event): Promise<{
     [key: string]: any;
   };
   console.log('res', res);
-  return {
-    asd: 'asd',
-    res: res,
+  const dataReturn = {
     data: res,
+    toJSON() {
+      return {
+        data: {
+          ...res,
+        },
+      };
+    },
   };
+  return dataReturn;
 });

@@ -1,5 +1,6 @@
 import * as mysql2 from 'mysql2';
 import Koa from 'koa';
+import { cunstomLogger } from '../logger/logs/log4js';
 
 class DbError extends Error {
   errCode: number;
@@ -28,7 +29,8 @@ const pool = mysql2.createPool({
   host: 'localhost',   // 数据库地址
   user: 'root',    // 数据库用户
   password: 'gXa7dB8y380',  // 数据库密码
-  database: 'code'  // 选中数据库
+  database: 'code',  // 选中数据库
+  dateStrings: true // <-  强制日期类型(TIMESTAMP, DATETIME, DATE)以字符串返回
 });
 
 
@@ -45,7 +47,9 @@ const dbQuery = function (sql: string, args: any | any[] | { [param: string]: an
     pool.getConnection((err, connection) => {
       if (err) {
         console.log('数据库连接错误');
-        reject(new DbConnectError('数据库连接错误'));
+        resolve({
+          'err': -1
+        });
       } else {
         connection.query(sql, args, (err, result) => {
           if (err) {
@@ -55,9 +59,6 @@ const dbQuery = function (sql: string, args: any | any[] | { [param: string]: an
               'err': -2
             });
           } else {
-            resolve({
-              'err': -2
-            });
             // 调用操作成功方法
             resolve({
               'err': 0,
@@ -89,7 +90,8 @@ const dbQueryWithErrorCatch = function (sql: string, args: any | any[] | { [para
             console.log(err);
             reject(new DbOperationError('数据库操作错误'));
           } else {
-            console.log('数据库操作成功');
+            console.log(['数据库操作成功', sql, args].join('|'));
+            cunstomLogger.logDebug(['数据库操作成功', sql, args].join('|'));
             // 调用操作成功方法
             resolve({
               'err': 0,

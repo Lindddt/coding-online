@@ -1,8 +1,8 @@
-import { FormItemProps, InputProps, SwitchProps } from 'naive-ui';
+import { FormItemProps, InputProps, SwitchProps, RadioGroupProps } from 'naive-ui';
 import { VNodeRef } from 'vue';
 
 export interface FormConfigBase {
-  formType: 'input' | 'select' | 'custom' | 'switch';
+  formType: 'input' | 'select' | 'custom' | 'switch' | 'radio';
   disabled?: boolean;
   key: string;
   label?: FormItemProps['label'];
@@ -31,6 +31,15 @@ export interface SwitchConfig extends FormConfigBase {
   'uncheckedContent'?: Element;
 }
 
+export interface RadioConfig extends FormConfigBase {
+  formType: 'radio';
+  value: RadioGroupProps['value'];
+  options: {
+    label: string;
+    value: string | number;
+  }[];
+}
+
 export interface CustomConfig extends FormConfigBase {
   formType: 'custom';
   value?: any;
@@ -47,4 +56,12 @@ export interface CustomConfig extends FormConfigBase {
 export type FormFieldConfig =
   InputConfig
   | SwitchConfig
+  | RadioConfig
   | CustomConfig;
+
+export interface FormRef {
+  validate: (keys?: string[]) => Promise<boolean>;
+  resetFields: () => void;
+  clearValidate: (keys?: string[]) => void;
+  formData: Record<string, any>;
+}

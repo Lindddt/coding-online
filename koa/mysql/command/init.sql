@@ -12,7 +12,6 @@ CREATE TABLE `code`.`user` (
   UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE
 );
 
-
 ALTER TABLE
   `code`.`user`
 ADD
@@ -24,9 +23,28 @@ ADD
 
 ;
 
-
 CREATE TABLE `code`.`verificationcode` (
   `email` VARCHAR(256) NOT NULL,
   `code` VARCHAR(6) NULL,
   PRIMARY KEY (`email`)
 );
+
+ALTER TABLE
+  `code`.`user` CHANGE COLUMN `uuid` `uuid` VARCHAR(40) NOT NULL,
+  CHANGE COLUMN `identity` `identity` INT NOT NULL DEFAULT '0';
+
+CREATE TABLE `code`.`session` (
+  `sessionId` VARCHAR(40) NOT NULL,
+  `sessionData` VARCHAR(512) NOT NULL,
+  PRIMARY KEY (`sessionId`)
+);
+
+ALTER TABLE
+  `code`.`user` CHANGE COLUMN `session` `sessionId` VARCHAR(40) NULL DEFAULT NULL;
+
+ALTER TABLE
+  `code`.`session`
+ADD
+  COLUMN `expire` DATETIME NOT NULL
+AFTER
+  `sessionData`;

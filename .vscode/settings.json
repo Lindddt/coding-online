@@ -22,4 +22,10 @@
   "volar.doctor.checkVueTsc": true,
   "volar.wrap_attributes": true,
   "html.format.wrapAttributes": "force-expand-multiline",
+  "cSpell.words": [
+    "errcode",
+    "Nuxt",
+    "pinia",
+    "verificationcode"
+  ],
 }

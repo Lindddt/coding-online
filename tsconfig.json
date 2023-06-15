@@ -5,10 +5,11 @@
     "jsxImportSource": "vue",
     "jsxFactory": "h",
     "jsxFragmentFactory": "Fragment",
-    "target": "es5",
+    "target": "es2017",
     "module": "commonjs",
   },
   "types": [
-    "naive-ui/volar"
+    "naive-ui/volar",
+    "@pinia/nuxt"
   ]
 }

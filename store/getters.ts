@@ -1,10 +1,10 @@
-import { StoreI } from './store';
+import { StoreState } from './type';
 
-export const currentUser = (state: StoreI) => {
+export const getCurrentUser = (state: StoreState) => {
   return state.currentUser;
 };
-export const userImage = (state: StoreI) => state.userImage;
-export const isLogin = (state: StoreI) => {
+export const getUserImage = (state: StoreState) => state.userImage;
+export const getLogin = (state: StoreState) => {
   if (typeof state.isLogin === 'string') {
     if (state.isLogin === 'true') {
       return true;
@@ -18,7 +18,7 @@ export const isLogin = (state: StoreI) => {
   }
 
 };
-export const email = (state: StoreI) => state.email;
-export const identity = (state: StoreI) => {
-  return parseInt(state.identity, 10);
+export const getEmail = (state: StoreState) => state.email;
+export const getIdentity = (state: StoreState) => {
+  return state.identity;
 };

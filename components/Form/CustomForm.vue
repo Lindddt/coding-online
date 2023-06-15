@@ -27,7 +27,7 @@
       />
       <n-switch
         v-else-if="item.formType === 'switch'"
-        :value="formValue[item.key]"
+        v-model:value="formValue[item.key]"
         :disabled="item.disabled"
         :rail-style="item['railStyle']"
         :checked-value="item['checkedValue']"
@@ -45,6 +45,21 @@
           {{ item.uncheckedContent }}
         </template>
       </n-switch>
+      <n-radio-group
+        v-if="item.formType === 'radio'"
+        v-model:value="formValue[item.key]"
+      >
+        <n-space>
+          <n-radio
+            v-for="option in item.options"
+            :key="option.value"
+            :value="option.value"
+            :default-value="item.value"
+          >
+            {{ option.label }}
+          </n-radio>
+        </n-space>
+      </n-radio-group>
       <template v-if="item.formType === 'custom'">
         <component :is="item['render']({ formData: formValue, changeData, validate })" />
       </template>
@@ -62,10 +77,10 @@
 </template>
 
 <script setup lang='ts'>
-  import { FormInst, NForm, NFormItem, NInput, NButton, NSwitch } from 'naive-ui';
-  import { defineComponent, reactive, ref } from 'vue';
+  import { FormInst, NForm, NFormItem, NInput, NButton, NSwitch, NRadio, NRadioGroup, FormValidationError } from 'naive-ui';
+  import { defineComponent, reactive, ref, defineExpose } from 'vue';
   import { FormFieldConfig } from './FormType';
-  import { sendMessage, Message } from '~/utils';
+  import { sendMessage } from '~/utils';
 
   const props = defineProps<{
     'formList': FormFieldConfig[],
@@ -102,27 +117,34 @@
   const changeData = (value: any, key: string) => {
     formValue.value[key] = value;
     formInstRef.value?.validate();
-    validate();
+    // validate();
     console.log(formValue.value, 'formValue', formItemRef);
   };
 
   const validate = async (keys?: string[]): Promise<boolean> => {
     if (keys) {
       let b = true;
-      keys.forEach((key) => {
+      keys.forEach(async (key) => {
         if (!formItemRef.value[key]) b = false;
-        formItemRef.value[key].validate();
-        console.log(key, 'item', formItemRef.value[key].validate());
+        try {
+          await formItemRef.value[key].validate();
+          console.log(key, 'item', formItemRef.value[key]);
+        } catch (error) {
+          b = false;
+          console.log(key, 'item', 'dasads', error);
+          const err = error as FormValidationError;
+          sendMessage.error(err[0].message || '');
+        }
       });
       return b;
     } else {
       formInstRef.value?.validate((errors) => {
         if (!errors) {
-          Message.success('验证成功');
+          sendMessage.success('验证成功');
           return true;
         } else {
           console.log(errors);
-          Message.error('验证失败');
+          sendMessage.error('验证失败');
           return false;
         }
       },);
@@ -143,4 +165,9 @@
 
   };
 
+  defineExpose({
+    validate,
+    // eslint-disable-next-line vue/no-ref-object-destructure
+    formData: formValue.value,
+  });
 </script>
