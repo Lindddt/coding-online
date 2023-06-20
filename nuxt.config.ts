@@ -11,7 +11,8 @@ export default defineNuxtConfig({
           '@css-render/vue3-ssr',
           '@juggle/resize-observer'
         ]
-        : ['@juggle/resize-observer']
+        : ['@juggle/resize-observer'],
+
   },
   ignore: [
     '**/*.test.*',
@@ -25,7 +26,7 @@ export default defineNuxtConfig({
   nitro: {
     devProxy: {
       '/backend/': {
-        target: 'http://localhost:9090/',
+        target: 'http://127.0.0.1:9090/',
         prependPath: true,
         changeOrigin: true,
       }
@@ -33,13 +34,19 @@ export default defineNuxtConfig({
     // 该配置用于服务端请求转发
     routeRules: {
       '/backend/**': {
-        proxy: 'http://localhost:9090/**'
+        proxy: 'http://127.0.0.1:9090/**'
       }
     }
   },
   modules: [
     // Simple usage
-    '@nuxtjs/eslint-module',
+    // [
+    //   '@nuxtjs/eslint-module',
+    //   {
+    //     lintOnStart: false,
+    //     emitWarning: false,
+    //   }
+    // ],
     '@nuxtjs/tailwindcss',
     [
       '@pinia/nuxt',
@@ -53,6 +60,7 @@ export default defineNuxtConfig({
       },
     ],
     '@pinia-plugin-persistedstate/nuxt',
+    '@nuxt/devtools',
   ],
   components: [
     {

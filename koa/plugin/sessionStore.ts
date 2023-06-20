@@ -55,11 +55,7 @@ export class MysqlStore {
     // setInterval(this.cleanup.bind(this), cleanInterval);
   }
 
-  async set(sid: string, session: {
-    email: string;
-    username: string;
-    identity: Identity;
-  }, ttl = 600000) {
+  async set(sid: string, session: any, ttl = 600000) {
     const expires = getExpiresOn(session, ttl).valueOf();
     const data = JSON.stringify(session);
 
@@ -75,6 +71,7 @@ export class MysqlStore {
 
   // 读取session
   async get(sid: string) {
+    console.log('get', sid);
     try {
       const results = await this.queryPromise(GET_STATEMENT, [sid, Date.now()]);
       let session = null;

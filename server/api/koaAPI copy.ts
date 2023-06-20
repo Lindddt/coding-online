@@ -11,8 +11,11 @@ export default defineEventHandler(async (event) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { path, ...reqBody } = body;
   // console.log('reqBody', reqBody);
-  // https://github.com/unjs/ofetch
-  const res = await fetch(`http://127.0.0.1:9090/${body.path || ''}`, {
+  const res = await $useFetch.raw<{
+    errcode: number;
+    requestID?: string;
+    [key: string]: any;
+  }>(`/backend/${body.path || ''}`, {
     method: 'POST',
     body: {
       ...reqBody,
@@ -21,44 +24,27 @@ export default defineEventHandler(async (event) => {
     credentials: 'include',
     headers: {
       'cookie': headers.cookie || '',
-    }
+    },
   });
-  // const res = await $fetch.raw<{
-  //   errcode: number;
-  //   requestID?: string;
-  //   [key: string]: any;
-  // }>(`/backend/${body.path || ''}`, {
-  //   method: 'POST',
-  //   body: {
-  //     ...reqBody,
-  //     requestID: uuid(),
-  //   },
-  //   credentials: 'include',
-  //   headers: {
-  //     'cookie': headers.cookie || '',
-  //   },
-  //   async onResponse({ request, response, options }) {
-  //     // Log response
-  //     console.log('[fetch response]', request, JSON.stringify(response));
-  //   }
-  // });
   // 如果您希望从另一个方向传递cookie，即从内部请求返回到client，则需要自己处理此操作。
-  // res.headers.forEach((value, key) => {
-  //   console.log('key', key, value);
-  // });
-  const resData = await res.text();
-  console.log('res', JSON.stringify(res), resData);
-  const cookies = (res.headers.get('Set-Cookie') || '').split(/,(?=[^,]*=)/);
+  res.headers.forEach((value, key) => {
+    console.log('key', key, value);
+
+  });
+  console.log('set-cookie', res.headers.get('set-cookie'),JSON.stringify(res.headers));
+  const cookies = (res.headers.get('set-cookie') || '').split(',');
   for (const cookie of cookies) {
-    appendHeader(event, 'Set-Cookie', cookie);
-    console.log('Set-Cookie', cookie);
+    appendHeader(event, 'set-cookie', cookie);
+    console.log('set-cookie', cookie);
   }
   // console.log('res', res._data);
   const dataReturn = {
     data: res,
     toJSON() {
       return {
-        data: JSON.parse(resData),
+        data: {
+          ...res._data,
+        },
       };
     },
   };

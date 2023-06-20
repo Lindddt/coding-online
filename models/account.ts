@@ -49,7 +49,7 @@ export const login = async ({ email, password }: {
   errcode: number;
 }> => {
   const res = await requestBackend({
-    path: '/account/login',
+    path: 'account/login',
     body: {
       email,
       password,
@@ -61,7 +61,7 @@ export const login = async ({ email, password }: {
 
 export const logout = async () => {
   const res = await requestBackend({
-    path: '/account/logout',
+    path: 'account/logout',
     body: {
     },
   });

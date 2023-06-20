@@ -12,6 +12,8 @@ export enum ErrorCode {
   EmailExist = 6,
   /** 没有找到结果 */
   DbNoResult = 7,
+  /** 参数错误或缺失 */
+  ParameterError = 8,
 }
 
 export const ErrorObject:{
@@ -54,5 +56,10 @@ export const ErrorObject:{
   [ErrorCode.DuplicateKey]: {
     errMsg: '重复的键',
     errcode: ErrorCode.DuplicateKey,
+  },
+  /** 参数错误或缺失 */
+  [ErrorCode.ParameterError]: {
+    errMsg: '参数错误或缺失',
+    errcode: ErrorCode.ParameterError,
   },
 };

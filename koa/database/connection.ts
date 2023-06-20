@@ -88,10 +88,12 @@ const dbQueryWithErrorCatch = function (sql: string, args: any | any[] | { [para
           if (err) {
             console.log('数据库操作错误');
             console.log(err);
+            // console.error(['数据库操作错误', sql, args].join('|'));
+            cunstomLogger.logError(['数据库操作错误', sql, args].join('|'));
             reject(new DbOperationError('数据库操作错误'));
           } else {
-            console.log(['数据库操作成功', sql, args].join('|'));
-            cunstomLogger.logDebug(['数据库操作成功', sql, args].join('|'));
+            // console.log(['数据库操作成功', sql, args].join('|'));
+            cunstomLogger.logDebug(['数据库操作成功', sql, args, JSON.stringify(result)].join('|'));
             // 调用操作成功方法
             resolve({
               'err': 0,

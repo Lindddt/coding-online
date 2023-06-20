@@ -26,9 +26,11 @@ module.exports = {
     // 你的全局变量（设置为 false 表示它不允许被重新赋值）
     //
     // myGlobal: false
-    '$fetch': true,
-    '$pinia': true,
-    'NodeJS': true,
+    '$fetch': false,
+    '$pinia': false,
+    'NodeJS': false,
+    'definePageMeta': false,
+    'useRequestHeaders': false,
   },
   // 'parser': '@babel/eslint-parser',
   // 'parserOptions': {

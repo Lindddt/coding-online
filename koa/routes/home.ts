@@ -1,13 +1,26 @@
 import connection from '../database/connection';
 import * as Router from 'koa-router';
 import Koa from 'koa';
+import * as Joi from 'joi';
 import { RowDataPacket } from 'mysql2';
 import { ErrorCode, ErrorObject } from '../../types/errcode';
 import { v4 as uuid } from 'uuid';
+import validateSchemaJoi from '../middlewares/validateSchemaJoi';
 
 const homeRouter = new Router();
 
-homeRouter.post('/login', async (ctx: Koa.Context, next) => {
+const loginSchema = Joi.object({
+  email: Joi.string()
+    .min(0)
+    .max(30)
+    .required(),
+  password: Joi.string()
+    .min(0)
+    .max(30)
+    .required(),
+  requestID: Joi.string(),
+});
+homeRouter.post('/login', validateSchemaJoi('post', loginSchema),async (ctx: Koa.Context, next) => {
   const body = ctx.request.body as {
     email: string;
     password: string;
@@ -75,11 +88,15 @@ homeRouter.post('/login', async (ctx: Koa.Context, next) => {
         ctx.session!.identity = identity;
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         ctx.session!.email = email;
-        await ctx.session.save();
+        ctx.session.save();
+        // await ctx.session.manuallyCommit();
       }
 
       ctx.response.body = {
-        'errcode': 0, 'nickname': username, 'identity': identity
+        errcode: 0,
+        result: {
+          'nickname': username, 'identity': identity
+        }
       };
       await next();
       return;
@@ -214,7 +231,10 @@ homeRouter.post('/register', async (ctx: Koa.Context, next) => {
     case 0:
     default: {
       ctx.response.body = {
-        'errcode': 0, 'nickname': username, 'identity': identity, 'email': email
+        errcode: 0,
+        result: {
+          'nickname': username, 'identity': identity, 'email': email
+        }
       };
     }
   }
@@ -244,8 +264,10 @@ homeRouter.post('/register', async (ctx: Koa.Context, next) => {
 
 homeRouter.post('/logout', async (ctx: Koa.Context, next) => {
   await next();
-  console.log('logout', ctx.session?.isNew);
+  console.log('logout', ctx.session?.isNew ? 'New' : 'NotNew');
   ctx.session = null;
+  // await ctx.session?.manuallyCommit();
+
   ctx.response.body = {
     'errcode': 0
   };

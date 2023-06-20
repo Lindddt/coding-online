@@ -28,4 +28,5 @@
     "pinia",
     "verificationcode"
   ],
+  "terminal.integrated.scrollback": 10000,
 }

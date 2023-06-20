@@ -12,17 +12,28 @@ export const print = {
 
 const createServer = async (): Promise<Koa> => {
   const koa: Koa = new Koa();
-
+  koa.use(async (ctx: Koa.Context, next) => {
+    ctx.set('Access-Control-Allow-Origin', '*');
+    ctx.set('Access-Control-Allow-Methods', 'OPTIONS, GET, PUT, POST, DELETE');
+    ctx.set('Access-Control-Allow-Credentials', 'true');
+    ctx.set('Access-Control-Allow-Headers', 'x-requested-with, accept, origin, content-type');
+    await next();
+  });
   useMiddlewares(koa);
 
   // useContainer(Container);
 
   koa.use(koaRouter.routes());
-  // const app: Koa = useKoaServer<Koa>(koa, routingConfigs);
+
   koa.use(async (ctx: Koa.Context, next) => {
-    console.log('ctx', ctx.request.URL);
+    // console.log('ctxdsadasda', ctx.cookies.get('code.sess'), ctx.session?.test, JSON.stringify(ctx.response.header['set-cookie']));
     await next();
   });
+  // const app: Koa = useKoaServer<Koa>(koa, routingConfigs);
+  // koa.use(async (ctx: Koa.Context, next) => {
+  //   console.log('ctx', ctx.request.URL);
+  //   await next();
+  // });
 
   return koa;
 };

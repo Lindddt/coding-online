@@ -1,7 +1,7 @@
 
 import homeRouter from './home';
 // import users from './users';
-// import questionsListRouter from './questions-list-router';
+import questionsListRouter from './questions-list-router';
 // import questionRouter from './question-router';
 // import roomRouter from './room';
 // import messageboard from './messageboard';
@@ -17,7 +17,7 @@ koaRouter.use('/verificationcode', verificationcode.routes(), verificationcode.a
 // koaRouter.use('/messageboard', messageboard);
 // koaRouter.use('/users', users);
 
-// koaRouter.use('/questions_list', questionsListRouter);
+koaRouter.use('/questions_list', questionsListRouter.routes(), questionsListRouter.allowedMethods());
 // koaRouter.use('/question', questionRouter);
 // koaRouter.use('/room', roomRouter);
 

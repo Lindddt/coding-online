@@ -1,7 +1,68 @@
 <template>
   <div class="body">
     <div id="software">
-      asddadas
+      <div class="header">
+        <div class="nav">
+          <n-list>
+            <n-list-item
+              v-for="item in indexRouter"
+              :key="item.id"
+            >
+              <NuxtLink :to="item.router">
+                {{ item.text }}
+              </NuxtLink>
+            </n-list-item>
+          </n-list>
+        </div>
+        <div class="user">
+          <div
+            v-show="!isLogin"
+            :key="Key1"
+            class="register_login"
+          >
+            <span
+              class="nav-login"
+              @click="clerkLogin"
+            >登录</span>
+            |
+            <span
+              class="nav-register"
+              @click="clerkRegister"
+            >注册</span>
+          </div>
+          <div
+            v-show="isLogin"
+            :key="Key2"
+            class="login_user"
+          >
+            <span @click="toMessageBoard">{{ currentUser }},</span> 你好
+            <span @click="logout"> 退出登录</span>
+          </div>
+        </div>
+      </div>
+
+      <n-modal
+        v-model:show="showModal"
+        :on-after-leave="() => { showModal = false }"
+      >
+        <n-card
+          style="width: 600px"
+          :title="modelType === 'login' ? '登录' : '注册'"
+          size="huge"
+          :bordered="false"
+          role="dialog"
+          aria-modal="true"
+        >
+          <custom-form
+            ref="formRef"
+            :form-list="formConfigList"
+            :on-submit="onSubmit"
+            :confirm-text="modelType === 'login' ? '登录' : '注册'"
+            label-placement="left"
+          />
+        </n-card>
+      </n-modal>
+      <slot />
     </div>
   </div>
 </template>
@@ -9,7 +70,6 @@
 <script setup lang='ts'>
   // import { userStatus } from '@/store/mutations';
   // import { identity } from '@/store/getters';
-
   import { NInput, NList, NListItem, NModal, NCard, FormItemRule } from 'naive-ui';
   import { ref, watchEffect, watch, h, resolveComponent } from 'vue';
   import qs from 'qs';
@@ -22,12 +82,6 @@
   import { Identity } from '~/types';
   import { useStore } from '~/store';
   import { storeToRefs } from 'pinia';
-
-
-  definePageMeta({
-    layout: 'nav',
-  });
-
   console.log('Hello from the homepage');
   const store = useStore();
 
