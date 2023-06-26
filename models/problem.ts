@@ -1,7 +1,8 @@
 import questionsListRouter from '~/koa/routes/questions-list-router';
 import { requestBackend, requestBackendT } from './request';
+import { Problem } from '~/types/problem';
 
-export interface question{
+export interface question {
   QID: number,
   Title: string,
   Time: string,
@@ -23,6 +24,22 @@ export const getProblemList = async ({
     body: {
       startNum,
       endNum,
+    }
+  });
+  return res;
+
+};
+
+
+export const getProblemDetail = async ({
+  id,
+}: {
+  id: number,
+  }): Promise<Problem> => {
+  const res = await requestBackend({
+    path: 'question/get_question_detail',
+    body: {
+      id,
     }
   });
   return res;

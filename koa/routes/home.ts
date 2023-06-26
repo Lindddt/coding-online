@@ -6,6 +6,7 @@ import { RowDataPacket } from 'mysql2';
 import { ErrorCode, ErrorObject } from '../../types/errcode';
 import { v4 as uuid } from 'uuid';
 import validateSchemaJoi from '../middlewares/validateSchemaJoi';
+import { assign } from 'lodash';
 
 const homeRouter = new Router();
 
@@ -20,7 +21,7 @@ const loginSchema = Joi.object({
     .required(),
   requestID: Joi.string(),
 });
-homeRouter.post('/login', validateSchemaJoi('post', loginSchema),async (ctx: Koa.Context, next) => {
+homeRouter.post('/login', validateSchemaJoi('post', loginSchema), async (ctx: Koa.Context, next) => {
   const body = ctx.request.body as {
     email: string;
     password: string;
@@ -44,7 +45,7 @@ homeRouter.post('/login', validateSchemaJoi('post', loginSchema),async (ctx: Koa
       await next();
       return;
     }
-    case -2: {
+    case ErrorCode.DbOperationError: {
       console.log('操作失败');
       ctx.response.body = {
         errMsg: '操作失败',
@@ -80,18 +81,17 @@ homeRouter.post('/login', validateSchemaJoi('post', loginSchema),async (ctx: Koa
       // ctx.session.view = 1; //取消注释则返回 notNew
       // await ctx.session.save();  //取消注释则返回 notNew
 
-      if (ctx.session?.isNew) {
-        console.log('New');
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        ctx.session!.username = username;
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        ctx.session!.identity = identity;
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        ctx.session!.email = email;
-        ctx.session.save();
-        // await ctx.session.manuallyCommit();
-      }
 
+      console.log('New');
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      ctx.session!.username = username;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      ctx.session!.identity = identity;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      ctx.session!.email = email;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      ctx.session!.save();
+      // await ctx.session.manuallyCommit();
       ctx.response.body = {
         errcode: 0,
         result: {
@@ -105,7 +105,6 @@ homeRouter.post('/login', validateSchemaJoi('post', loginSchema),async (ctx: Koa
 });
 
 homeRouter.post('/register', async (ctx: Koa.Context, next) => {
-  await next();
   const body = ctx.request.body as {
     email: string;
     password: string;
@@ -131,11 +130,13 @@ homeRouter.post('/register', async (ctx: Koa.Context, next) => {
     case -1: {
       console.log('数据库连接失败');
       ctx.response.body = ErrorObject[ErrorCode.DbConnectError];
+      await next();
       return;
     }
-    case -2: {
+    case ErrorCode.DbOperationError: {
       console.log('操作失败');
       ctx.response.body = ErrorObject[ErrorCode.DbOperationError];
+      await next();
       return;
     }
     case 0:
@@ -144,6 +145,7 @@ homeRouter.post('/register', async (ctx: Koa.Context, next) => {
         console.log(db_res.result);
         ctx.response.body = ErrorObject[ErrorCode.DbNoResult];
         flag = true;
+        await next();
         return;
       }
       const resData = db_res.result[0] as RowDataPacket;
@@ -151,6 +153,7 @@ homeRouter.post('/register', async (ctx: Koa.Context, next) => {
         console.log(resData.code);
         console.log(verificationcode);
         ctx.response.body = ErrorObject[ErrorCode.VerificationcodeError];
+        await next();
         return;
       }
     }
@@ -164,11 +167,13 @@ homeRouter.post('/register', async (ctx: Koa.Context, next) => {
     case -1: {
       console.log('数据库连接失败');
       ctx.response.body = ErrorObject[ErrorCode.DbConnectError];
+      await next();
       return;
     }
-    case -2: {
+    case ErrorCode.DbOperationError: {
       console.log('操作失败');
       ctx.response.body = ErrorObject[ErrorCode.DbOperationError];
+      await next();
       return;
     }
     case 0:
@@ -176,6 +181,7 @@ homeRouter.post('/register', async (ctx: Koa.Context, next) => {
       if (db_res.result.length !== 0) {
         console.log(db_res.result);
         ctx.response.body = ErrorObject[ErrorCode.EmailExist];
+        await next();
         return;
       }
     }
@@ -193,7 +199,7 @@ homeRouter.post('/register', async (ctx: Koa.Context, next) => {
       ctx.response.body = ErrorObject[ErrorCode.DbConnectError];
       return;
     }
-    case -2: {
+    case ErrorCode.DbOperationError: {
       console.log('操作失败');
       ctx.response.body = ErrorObject[ErrorCode.DbOperationError];
       return;
@@ -203,6 +209,7 @@ homeRouter.post('/register', async (ctx: Koa.Context, next) => {
       if (db_res.result.length !== 0) {
         console.log(db_res.result);
         ctx.response.body = ErrorObject[ErrorCode.DbNoResult];
+        await next();
         return;
       }
     }
@@ -223,7 +230,7 @@ homeRouter.post('/register', async (ctx: Koa.Context, next) => {
       ctx.response.body = ErrorObject[ErrorCode.DbConnectError];
       return;
     }
-    case -2: {
+    case ErrorCode.DbOperationError: {
       console.log('操作失败');
       ctx.response.body = ErrorObject[ErrorCode.DbOperationError];
       return;
@@ -240,37 +247,62 @@ homeRouter.post('/register', async (ctx: Koa.Context, next) => {
   }
 });
 
+homeRouter.post('/check', async (ctx: Koa.Context, next) => {
+  await next();
+  const body = ctx.request.body as {
+    email: string;
+  };
+  const email = body.email;
+  const sql = 'select id from user where email = ?';
+  const arg = [];
+  arg.push(email);
+  const db_res = await connection.dbQueryWithErrorCatch(sql, arg);
+  if (db_res.result.length === 0) {
+    assign(ctx.response.body, {
+      errcode: 0,
+      result: false
+    });
+    await next();
+  } else {
+    assign(ctx.response.body, {
+      errcode: 0,
+      result: true
+    });
+    await next();
+  }
+});
 
 // router.post('/check', async (req, res) => {
-//   const email = req.body.email;
-//   const sql = 'select id from user where email = ?';
-//   const arg = [];
-//   arg.push(email);
-//   const db_res = await connection.dbQuery(sql, arg);
-//   if (db_res.err === 0) {
-//     if (db_res.result.length === 0) {
-//       res.send({
-//         'result': false
-//       });
-//       res.end();
-//     } else {
-//       res.send({
-//         'result': true
-//       });
-//       res.end();
-//     }
+// const email = req.body.email;
+// const sql = 'select id from user where email = ?';
+// const arg = [];
+// arg.push(email);
+// const db_res = await connection.dbQuery(sql, arg);
+// if (db_res.err === 0) {
+//   if (db_res.result.length === 0) {
+//     res.send({
+//       'result': false
+//     });
+//     res.end();
+//   } else {
+//     res.send({
+//       'result': true
+//     });
+//     res.end();
 //   }
-// // });
+// }
+// });
 
 homeRouter.post('/logout', async (ctx: Koa.Context, next) => {
   await next();
   console.log('logout', ctx.session?.isNew ? 'New' : 'NotNew');
   ctx.session = null;
   // await ctx.session?.manuallyCommit();
-
-  ctx.response.body = {
-    'errcode': 0
-  };
+  assign(ctx.response.body, {
+    errcode: 0,
+    result: {
+    },
+  });
   return;
 });
 
@@ -288,5 +320,33 @@ homeRouter.post('/logout', async (ctx: Koa.Context, next) => {
 //   res.end();
 // });
 
+homeRouter.post('/login_check', async (ctx: Koa.Context, next) => {
+  const response = {};
+  if (ctx.session?.username) {
+    assign(response, {
+      errcode: 0,
+      result: {
+        login: true,
+        username: ctx.session?.username,
+        identity: ctx.session?.identity,
+      },
+    });
+    ctx.response.body = response;
+    // console.log('login_check', ctx.response.body, ctx.session?.username, ctx.session?.identity);
+    await next();
+    return;
+  } else {
+    assign(response, {
+      errcode: 0,
+      result: {
+        login: false,
+      },
+    });
+    ctx.response.body = response;
+    // console.log('login_check', ctx.response.body);
+    await next();
+    return;
+  }
+});
 
 export default homeRouter;

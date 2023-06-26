@@ -17,7 +17,7 @@ export const requestBackend = async ({
     }
   });
   if (res.data.errcode === 0) {
-    return res.data.result;
+    return res.data.result || {};
   } else if (ErrorObject[res.data.errcode]) {
     throw Error(res.data.errMsg || ErrorObject[res.data.errcode].errMsg);
   } else {

@@ -1,6 +1,7 @@
 /* eslint-disable no-invalid-this */
 import { Identity } from '~/types';
 import { StoreState } from './type';
+import { checkLogin } from '~/models';
 
 export function setUserStatus(this: StoreState, user: {
   login: boolean;
@@ -47,27 +48,42 @@ export function resetUserStatus(this: StoreState) {
   this.email = '';
   this.identity = -1;
 }
-// export const checkLogin = (this: { isLogin: boolean; user: any; identity: number; }) => {
-//   axios({
-//     method: 'post',
-//     url: '/login_check',
-//   })
-//     .then((res: { data: { errcode: number; username: any; identity: string; }; }) => {
-//       //获取数据
-//       if (res.data.errcode === 0) {
-//         this.isLogin = true;
-//         this.user = res.data.username;
-//         this.identity = parseInt(res.data.identity);
-//       }
-//       else if (res.data.errcode === -1) {
-//         this.isLogin = false;
-//       }
-//     })
-//     .catch(function (error: any) {
-//       console.log(error)
 
-//     })
-// }
+export async function checkLoginStatus(this: StoreState) {
+  try {
+    console.log('checkLoginStatus');
+    const res = await checkLogin();
+    if (res.login) {
+      this.isLogin = true;
+      this.currentUser = res.username || '';
+      this.identity = res.identity || -1;
+    }
+    else{
+      this.isLogin = false;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+  // axios({
+  //   method: 'post',
+  //   url: '/login_check',
+  // })
+  //   .then((res: { data: { errcode: number; username: any; identity: string; }; }) => {
+  //     //获取数据
+  //     if (res.data.errcode === 0) {
+  //       this.isLogin = true;
+  //       this.user = res.data.username;
+  //       this.identity = parseInt(res.data.identity);
+  //     }
+  //     else if (res.data.errcode === -1) {
+  //       this.isLogin = false;
+  //     }
+  //   })
+  //   .catch(function (error: any) {
+  //     console.log(error)
+
+  //   })
+}
 
 // export const userImageGet = (this: { userImage: null; }, imageUrl: null) => {
 //   if (imageUrl) {

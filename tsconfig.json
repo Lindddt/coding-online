@@ -11,5 +11,10 @@
   "types": [
     "naive-ui/volar",
     "@pinia/nuxt"
-  ]
+  ],
+  "paths": {
+    "#imports": [
+      ".nuxt/imports"
+    ],
+  }
 }

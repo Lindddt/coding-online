@@ -31,21 +31,21 @@ export const useMiddlewares = <T extends Koa>(app: T): T => {
     // rolling: true,
   }, app));
   app.use(async (ctx: Koa.Context, next) => {
+    cunstomLogger.logDebug(`'path: ${ctx.request.path}`);
     let n = ctx.session?.views || 0;
     // console.log('ctx', ctx.cookies.get('code.sess'), JSON.stringify(ctx.session), ctx.session?.save());
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     ctx.session!.views = ++n;
-    ctx.body = n + ' views';
-    if (ctx.session?.isNew) {
-      // console.log('New');
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      ctx.session!.test = uuid();
-      ctx.session.save();
-      console.log('New', ctx.session!.views);
-    }
-    await ctx.session?.save();
-    await ctx.session?.manuallyCommit();
+    // ctx.body = n + ' views';
+    // if (ctx.session?.isNew) {
+    //   // console.log('New');
+    //   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    //   ctx.session!.test = uuid();
+    //   ctx.session.save();
+    //   console.log('New', ctx.session!.views);
+    // }
     await next();
+    return;
   });
   app.use(async (ctx: Koa.Context, next) => {
     try {

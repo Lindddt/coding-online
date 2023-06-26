@@ -26,6 +26,7 @@
 
   definePageMeta({
     layout: 'nav',
+    componentKey: 'index'
   });
 
   console.log('Hello from the homepage');
@@ -38,27 +39,25 @@
       id: 0,
       text: '首页',
       router: {
-        path: '/'
+        path: '/index'
       }
     },
     {
       id: 1,
       text: '题目列表',
       router: {
-        path: '/problems_list/problems_list'
+        path: '/problems'
       }
     },
     {
       id: 2,
       text: '留言',
       router: {
-        path: '/message_board/message_board'
+        path: '/message_board'
       }
     },
   ];
 
-  const res = await $fetch('/api/hello');
-  console.log(res);
 
   const isLoginShow = ref(false);
   const isRegisterShow = ref(false);

@@ -20,6 +20,9 @@ dependencies:
   '@types/koa-router':
     specifier: ^7.4.4
     version: 7.4.4
+  '@types/lodash':
+    specifier: ^4.14.195
+    version: 4.14.195
   '@vitejs/plugin-vue':
     specifier: ^4.2.3
     version: 4.2.3(vite@4.3.9)(vue@3.3.4)
@@ -29,6 +32,9 @@ dependencies:
   axios:
     specifier: ^1.4.0
     version: 1.4.0
+  date-fns:
+    specifier: ^2.30.0
+    version: 2.30.0
   joi:
     specifier: ^17.9.2
     version: 17.9.2
@@ -53,6 +59,9 @@ dependencies:
   less:
     specifier: ^4.1.3
     version: 4.1.3
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   log4js:
     specifier: ^6.9.1
     version: 6.9.1
@@ -166,9 +175,15 @@ devDependencies:
   eslint-plugin-vue:
     specifier: ^9.14.1
     version: 9.14.1(eslint@8.42.0)
+  monaco-editor:
+    specifier: ^0.39.0
+    version: 0.39.0
   nuxt:
     specifier: ^3.5.2
     version: 3.5.3(@types/node@18.16.16)(eslint@8.42.0)(less@4.1.3)(typescript@5.1.3)
+  nuxt-monaco-editor:
+    specifier: ^1.2.2
+    version: 1.2.2(monaco-editor@0.39.0)(vite@4.3.9)
   prettier:
     specifier: ^2.8.8
     version: 2.8.8
@@ -6062,6 +6077,14 @@ packages:
     resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==}
     dev: false
 
+  /monaco-editor-nls@3.0.0:
+    resolution: {integrity: sha512-WYYa1lqaN1wsJOZ5j+LVHvmJgx23UbCG7XnzcY8x9DT59EZNmNsCmyMU1kyhmyNDE/KZeLCAXAM7BvQ/P6/B7w==}
+    dev: true
+
+  /monaco-editor@0.39.0:
+    resolution: {integrity: sha512-zhbZ2Nx93tLR8aJmL2zI1mhJpsl87HMebNBM6R8z4pLfs8pj604pIVIVwyF1TivcfNtIPpMXL+nb3DsBmE/x6Q==}
+    dev: true
+
   /mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
@@ -6494,6 +6517,21 @@ packages:
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.2
+    dev: true
+
+  /nuxt-monaco-editor@1.2.2(monaco-editor@0.39.0)(vite@4.3.9):
+    resolution: {integrity: sha512-P1Op8WmypspRHOdlTPJCNKJwBkIGi9JMFntpgbKuqkMH2z+gkdKrCrHE1g8cOaRu2CH4jOf02Wgt/FtTwRDJiw==}
+    peerDependencies:
+      monaco-editor: '*'
+    dependencies:
+      '@nuxt/kit': 3.5.3
+      monaco-editor: 0.39.0
+      monaco-editor-nls: 3.0.0
+      vite-plugin-static-copy: 0.13.1(vite@4.3.9)
+    transitivePeerDependencies:
+      - rollup
+      - supports-color
+      - vite
     dev: true
 
   /nuxt@3.5.3(@types/node@18.16.16)(eslint@8.42.0)(less@4.1.3)(typescript@5.1.3):
@@ -9051,6 +9089,19 @@ packages:
     transitivePeerDependencies:
       - rollup
       - supports-color
+    dev: true
+
+  /vite-plugin-static-copy@0.13.1(vite@4.3.9):
+    resolution: {integrity: sha512-KwIcGBT1aOxSq+laK3VmSngoEa3HXWj/6ZEXdv+y59eZ7p/XSuPahoDo+CfYW22JjTdnstgeKWiX+78KNgDu6g==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    peerDependencies:
+      vite: ^3.0.0 || ^4.0.0
+    dependencies:
+      chokidar: 3.5.3
+      fast-glob: 3.2.12
+      fs-extra: 11.1.1
+      picocolors: 1.0.0
+      vite: 4.3.9(@types/node@18.16.16)(less@4.1.3)
     dev: true
 
   /vite-plugin-vue-inspector@3.4.2(vite@4.3.9):

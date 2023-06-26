@@ -8,6 +8,7 @@ import questionsListRouter from './questions-list-router';
 import verificationcode from './verificationcode';
 import * as Router from 'koa-router';
 import testRouter from './test';
+import questionRouter from './question-router';
 const koaRouter = new Router();
 
 koaRouter.use('/test', testRouter.routes(), testRouter.allowedMethods());
@@ -18,7 +19,7 @@ koaRouter.use('/verificationcode', verificationcode.routes(), verificationcode.a
 // koaRouter.use('/users', users);
 
 koaRouter.use('/questions_list', questionsListRouter.routes(), questionsListRouter.allowedMethods());
-// koaRouter.use('/question', questionRouter);
+koaRouter.use('/question', questionRouter.routes(), questionRouter.allowedMethods());
 // koaRouter.use('/room', roomRouter);
 
 export default koaRouter;

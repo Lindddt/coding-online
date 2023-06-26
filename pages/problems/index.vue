@@ -22,7 +22,7 @@
           <th class="problem_title">
             <span
               :routerIndex="problem.QID"
-              @click="problem_click"
+              @click="problemClick(problem.QID)"
             >{{ problem.Title }}</span>
           </th>
           <th><span>{{ problem.Time }}</span></th>
@@ -35,7 +35,7 @@
           v-model:page-size="pageSize"
           show-size-picker
           :item-count="problemsNum"
-          :page-sizes="[1,10, 20, 30, 40]"
+          :page-sizes="[1, 10, 20, 30, 40]"
           :on-update:page="(page: number) => {
             pageChange({ index: page });
           }"
@@ -55,6 +55,7 @@
   import { NInput, NList, NListItem, NModal, NCard, FormItemRule, NPagination } from 'naive-ui';
   import { ref, watchEffect, watch, h, resolveComponent } from 'vue';
   import qs from 'qs';
+  import { navigateTo, definePageMeta } from '#imports';
   import { sendMessage } from '~/utils';
   import { FormFieldConfig, FormRef } from '~/components';
   import * as models from '~/models';
@@ -66,7 +67,12 @@
   import { storeToRefs } from 'pinia';
   definePageMeta({
     layout: 'nav',
+    componentKey: 'problems'
   });
+  const store = useStore();
+
+  const { isLogin } = storeToRefs(store);
+
   const problemsNum = ref(10);
   const pageIndex = ref(1);
   const pageSize = ref(1);
@@ -84,51 +90,21 @@
       Difficulty: '',
     },
   ]);
-  const problem_click = (e) => {
-    let dom = e.target;
+  const problemClick = async (index: number) => {
+    if (isLogin.value) {
+      console.log(isLogin.value);
+      await navigateTo({
+        path: '/problems/problem_detail',
+        query: {
+          problemIndex: index,
+        }
+      });
+    }
+    else {
+      sendMessage.warning('尚未登录，请先登录');
+    }
 
-    // if (e.target.nodeName.toLowerCase() === 'span') {
-
-    //   if (isLogin) {
-    //     console.log(isLogin);
-    //     let routerIndex = dom.getAttribute('routerIndex');
-    //     $router.push({
-    //       path: '/problem', query: {
-    //         problemIndex: routerIndex
-    //       }
-    //     });
-    //   }
-    //   else {
-    //     // Message({
-    //     //   message: '尚未登录，请先登录',
-    //     //   type: 'warning'
-    //     // });
-    //     console.log($parent);
-    //   }
-
-    // }
   };
-
-  // const page_change = (index) => {
-  //   page_current_index = index;
-  //   page_changeAll();
-  // };
-
-  // const page_left = () => {
-  //   if (page_current_index > 1) {
-  //     page_current_index -= 1;
-  //     page_changeAll();
-  //   }
-
-  // };
-
-  // const pageRight = () => {
-  //   if (page_current_index < Math.ceil(problemsNum.value / 10)) {
-  //     page_current_index += 1;
-  //     page_changeAll();
-  //   }
-
-  // };
 
   const pageChange = async ({
     index,
@@ -164,68 +140,8 @@
       sendMessage.error(String(message || '请求失败'));
     }
   };
-  // const page_changeAll = () => {
-  //   start_index = (page_current_index - 1) * 10;
-  //   end_index = page_current_index * 10;
-  //   // axios({
-  //   //   method: 'post',
-  //   //   url: '/questions_list/get_questions_list',
-  //   //   data:
-  //   //     qs.stringify(
-  //   //       {
-  //   //         startNum:start_index,
-  //   //         endNum:end_index,
-  //   //       })// TBD:
-  //   //   ,
-  //   // })
-  //   //   .then(res => {
-  //   //     // 获取数据
-  //   //     if(res.data.errcode===0)
-  //   //     {
-  //   //       console.log(res.data.questionsList);
-  //   //       console.log(res.data.totalNum);
-  //   //       list_length=res.data.totalNum;
-  //   //       console.info(res);
-  //   //       if(res.data.totalNum<10)
-  //   //       {
-  //   //         end_index=res.data.totalNum;
-  //   //       }
-  //   //       problems=res.data.questionsList;
-  //   //       console.log(problems);
-  //   //     }
-  //   //     else if(res.data.errcode===-1)
-  //   //     {
-  //   //       Message.error('未知错误');
-  //   //     }
-  //   //     else if(res.data.errcode===-2)
-  //   //     {
-  //   //       Message.error('序号范围错误');
-  //   //     }
-  //   //     /*
-  //   //   $message({
-  //   //     message: '载入完成',
-  //   //     type: 'success'
-  //   //   }); */
-  //   //   })
-  //   //   .catch((error) => {
-  //   //     Message.error(error);
-  //   //   });
 
-  //   pageActive = page_current_index;
-  //   if (page_current_index > 3 && page_current_index < Math.ceil(problems.length / 10) - 2) {
-  //     page_index = page_current_index - 3;
-  //   }
-  //   else if (page_current_index <= 3) {
-  //     page_index = 0;
-  //   }
-  //   else {
-  //     page_index = Math.ceil(problems.length / 10) - 5;
-  //   }
-  // };
-  // 以下为初始化
-  pageChange({
-  });
-
+  pageChange({});
 </script>
 
 

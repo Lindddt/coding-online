@@ -1,6 +1,9 @@
 import * as mysql2 from 'mysql2';
 import Koa from 'koa';
-import { cunstomLogger } from '../logger/logs/log4js';
+import {
+ cunstomLogger
+} from '../logger/logs/log4js';
+import { ErrorCode } from '~/types';
 
 class DbError extends Error {
   errCode: number;
@@ -13,13 +16,13 @@ class DbError extends Error {
 
 class DbConnectError extends DbError {
   constructor(message: string) {
-    super(message, -1);
+    super(message, ErrorCode.DbConnectError);
   }
 }
 
 class DbOperationError extends DbError {
   constructor(message: string) {
-    super(message, -2);
+    super(message, ErrorCode.DbOperationError);
   }
 }
 
@@ -40,7 +43,7 @@ const dbQuery = function (sql: string, args: any | any[] | { [param: string]: an
   err: 0,
   result: mysql2.RowDataPacket[] | mysql2.RowDataPacket[][],
 } | {
-  err: -1 | -2,
+  err: -1 | ErrorCode.DbOperationError,
 }> {
   // 返回一个 Promise
   return new Promise((resolve, reject: (reason?: DbConnectError | DbOperationError) => void) => {
@@ -56,7 +59,7 @@ const dbQuery = function (sql: string, args: any | any[] | { [param: string]: an
             console.log('数据库操作错误');
             console.log(err);
             resolve({
-              'err': -2
+              'err': ErrorCode.DbOperationError
             });
           } else {
             // 调用操作成功方法
@@ -118,11 +121,11 @@ const dbQueryV2 = async ({
   sql: string;
   args: any | any[] | { [param: string]: any };
   ctx: Koa.Context;
-  process: (dbRes: mysql2.RowDataPacket[] | mysql2.RowDataPacket[][]) => void;
+  process?: (dbRes: mysql2.RowDataPacket[] | mysql2.RowDataPacket[][]) => void;
 }) => {
   try {
     const dbRes = await dbQueryWithErrorCatch(sql, args);
-    await process(dbRes.result);
+    await process?.(dbRes.result);
   } catch (error) {
     const err = error as any;
     if (err.errcode !== undefined) {

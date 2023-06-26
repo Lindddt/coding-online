@@ -21,24 +21,16 @@ questionsListRouter.post('/get_questions_list', validateSchemaJoi('post', getQue
     startNum: number;
     endNum: number;
   };
+
   let startNum = body.startNum;
   let endNum = body.endNum;
   const result = {
-    'questionsList': [] as any[],
-    'totalNum': -1,
+    result: {
+      'questionsList': [] as any[],
+      'totalNum': -1,
+    },
     'errcode': 0
   };
-  let n = ctx.session?.views || 0;
-  // console.log('ctx', ctx.cookies.get('code.sess'), JSON.stringify(ctx.session), ctx.session?.save());
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  ctx.session!.views = ++n;
-  if (ctx.session?.isNew) {
-    // console.log('New');
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    ctx.session!.test = uuid();
-    ctx.session.save();
-  }
-  console.log('New', ctx.session!.views);
 
   if (startNum === undefined || endNum === undefined) {
     startNum = 1;
@@ -52,7 +44,7 @@ questionsListRouter.post('/get_questions_list', validateSchemaJoi('post', getQue
   // 数据库操作结果处理
   if (resDB_1.err === 0) {
     const resData = resDB_1.result[0] as RowDataPacket;
-    result.totalNum = resData.totalNum;
+    result.result.totalNum = resData.totalNum;
   }
   // 获取题目
   const sql_2 = 'select QID,Title,DATE_FORMAT(Time,"%Y-%m-%d") as Time,Difficulty from questions where QID between ? and ?';
@@ -62,10 +54,8 @@ questionsListRouter.post('/get_questions_list', validateSchemaJoi('post', getQue
     // console.log(resDB_2.result, JSON.stringify(resDB_2.result));
     const resData = resDB_2.result as any[];
 
-    result.questionsList = resData;
-    ctx.response.body = {
-      'errcode': 0, 'result': result
-    };
+    result.result.questionsList = resData;
+    ctx.response.body = result;
     await next();
     return;
   }

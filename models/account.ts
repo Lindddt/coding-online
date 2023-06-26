@@ -68,3 +68,19 @@ export const logout = async () => {
   return res;
 
 };
+
+export const checkLogin = async (): Promise<{
+  login: false;
+}| {
+  login: true;
+  username: string;
+  identity: Identity
+}> => {
+  const res = await requestBackend({
+    path: 'account/login_check',
+    body: {
+    },
+  });
+  return res;
+
+};

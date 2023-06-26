@@ -7,9 +7,14 @@
 </template>
 
 <script setup lang="ts">
+  import { useStore } from '~/store';
+
+  const store = useStore();
+  store.checkLoginStatus();
   // import { useMessage } from 'naive-ui';
   console.log('app.vue');
-  // content
-  // window.$message = useMessage();
-  
+
+      // content
+      // window.$message = useMessage();
+
 </script>

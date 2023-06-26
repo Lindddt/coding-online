@@ -1,6 +1,15 @@
 import { defineNuxtConfig } from 'nuxt/config';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 
+
+const viteInclude = [
+  'monaco-editor/esm/vs/language/json/json.worker',
+  'monaco-editor/esm/vs/language/css/css.worker',
+  'monaco-editor/esm/vs/language/html/html.worker',
+  'monaco-editor/esm/vs/language/typescript/ts.worker',
+  'monaco-editor/esm/vs/editor/editor.worker',
+];
+
 export default defineNuxtConfig({
   build: {
     transpile:
@@ -60,8 +69,17 @@ export default defineNuxtConfig({
       },
     ],
     '@pinia-plugin-persistedstate/nuxt',
+    'nuxt-monaco-editor',
     '@nuxt/devtools',
   ],
+  monacoEditor: {
+    // These are default values:
+    locale: 'zh-hans',
+    componentName: {
+      codeEditor: 'MonacoEditor',
+      diffEditor: 'MonacoDiffEditor'
+    }
+  },
   components: [
     {
       // 果你想只根据组件的名称而不是路径自动导入组件，那么你需要使用配置对象的扩展形式将pathPrefix选项设置为false:
@@ -69,6 +87,7 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
   ],
+
   vite: {
     plugins: [
       vueJsx()
@@ -81,7 +100,9 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include:
         process.env.NODE_ENV === 'development'
-          ? ['naive-ui', 'vueuc', 'date-fns-tz/esm/formatInTimeZone']
+          ? [
+            'naive-ui', 'vueuc', 'date-fns-tz/esm/formatInTimeZone',
+          ]
           : []
     },
     esbuild: {

@@ -12,15 +12,7 @@ module.exports = {
   'parserOptions': {
     'parser': '@typescript-eslint/parser',
   },
-  env: {
-    // 你的环境变量（包含多个预定义的全局变量）
-    //
-    // browser: true,
-    // node: true,
-    // mocha: true,
-    // jest: true,
-    // jquery: true
-  },
+  env: {},
   // 'plugins': ['import', 'vue'],
   globals: {
     // 你的全局变量（设置为 false 表示它不允许被重新赋值）
@@ -58,16 +50,7 @@ module.exports = {
     'no-trailing-spaces': 1, // 一行结束后面不要有空格
     'no-var': 2, // 禁用var，用let和const代替
     'consistent-this': [2, 'that'], // this别名
-    'object-curly-newline': ['error', {
-      ObjectExpression: 'always',
-      ObjectPattern: {
-        multiline: true
-      },
-      ImportDeclaration: 'never',
-      ExportDeclaration: {
-        multiline: true, minProperties: 3
-      }
-    }],
+    'object-curly-newline': 'off',
     'vue/comment-directive': 'off',
     'vue/no-v-model-argument': 'off',
     'no-lone-blocks': 'off',

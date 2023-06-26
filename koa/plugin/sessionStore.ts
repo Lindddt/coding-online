@@ -2,6 +2,7 @@ import { Identity } from '~/types';
 import { v4 as uuid } from 'uuid';
 import connection from '../database/connection';
 import { RowDataPacket } from 'mysql2';
+import { cunstomLogger } from '../logger/logs/log4js';
 
 const CREATE_STATEMENT = 'CREATE  TABLE IF NOT EXISTS `_mysql_session_store` (`id` VARCHAR(255) NOT NULL, `expires` BIGINT NULL, `data` TEXT NULL, PRIMARY KEY (`id`), KEY `_mysql_session_store__expires` (`expires`));';
 const GET_STATEMENT = 'SELECT * FROM `_mysql_session_store` WHERE id  = ? AND expires > ?';
@@ -58,6 +59,7 @@ export class MysqlStore {
   async set(sid: string, session: any, ttl = 600000) {
     const expires = getExpiresOn(session, ttl).valueOf();
     const data = JSON.stringify(session);
+    cunstomLogger.logDebug(['sessionSet', sid, String(JSON.stringify(session))].join('|*|'));
 
     try {
       const results = await this.queryPromise(SET_STATEMENT, [sid, expires, data, expires, data]);
@@ -71,7 +73,8 @@ export class MysqlStore {
 
   // 读取session
   async get(sid: string) {
-    console.log('get', sid);
+    console.log('sessionGet', sid);
+    cunstomLogger.logDebug(['sessionGet', sid].join('|*|'));
     try {
       const results = await this.queryPromise(GET_STATEMENT, [sid, Date.now()]);
       let session = null;
