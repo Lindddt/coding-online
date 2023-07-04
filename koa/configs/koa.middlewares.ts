@@ -1,9 +1,9 @@
 import Koa from 'koa';
-import * as bodyParser from 'koa-bodyparser';
+import bodyParser from 'koa-bodyparser';
 import * as logger from 'koa-logger';
 import sessionSecret from './session';
 import { isProd } from './constants';
-import * as session from 'koa-session';
+import session from 'koa-session';
 import { MysqlStore } from '../plugin/sessionStore';
 import { cunstomLogger } from '../logger/logs/log4js';
 import { v4 as uuid } from 'uuid';

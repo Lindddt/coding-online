@@ -1,5 +1,5 @@
 import connection from '../database/connection';
-import * as Router from 'koa-router';
+import Router from 'koa-router';
 import Koa from 'koa';
 import * as Joi from 'joi';
 import { RowDataPacket } from 'mysql2';

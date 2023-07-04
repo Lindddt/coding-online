@@ -6,7 +6,7 @@ import questionsListRouter from './questions-list-router';
 // import roomRouter from './room';
 // import messageboard from './messageboard';
 import verificationcode from './verificationcode';
-import * as Router from 'koa-router';
+import Router from 'koa-router';
 import testRouter from './test';
 import questionRouter from './question-router';
 const koaRouter = new Router();

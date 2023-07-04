@@ -1,4 +1,4 @@
-import { FormItemProps, InputProps, SwitchProps, RadioGroupProps } from 'naive-ui';
+import { FormItemProps, InputProps, SwitchProps, RadioGroupProps,SelectProps } from 'naive-ui';
 import { VNodeRef } from 'vue';
 
 export interface FormConfigBase {
@@ -40,6 +40,17 @@ export interface RadioConfig extends FormConfigBase {
   }[];
 }
 
+export interface SelectConfig extends FormConfigBase {
+  formType: 'select';
+  value?: SelectProps['value'];
+  options: SelectProps['options'];
+  placeholder?: SelectProps['placeholder'];
+  virtualScroll?: SelectProps['virtualScroll'];
+  multiple?: SelectProps['multiple'];
+  clearable?: SelectProps['clearable'];
+  'onUpdateValue'?: SelectProps['onUpdate:value'];
+}
+
 export interface CustomConfig extends FormConfigBase {
   formType: 'custom';
   value?: any;
@@ -57,6 +68,7 @@ export type FormFieldConfig =
   InputConfig
   | SwitchConfig
   | RadioConfig
+  | SelectConfig
   | CustomConfig;
 
 export interface FormRef {

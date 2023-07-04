@@ -1,8 +1,12 @@
-import { Server } from 'http';
 import Koa from 'koa';
 import CONSTANTS from './configs/constants';
 import { useMiddlewares } from './configs/koa.middlewares';
 import koaRouter from './routes/index';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import http from 'http';
+import { setSocketIO } from './socket-io';
+
 export const print = {
   log: (text: string) => console.log('\x1b[37m%s \x1b[2m%s\x1b[0m', '>', text),
   danger: (text: string) => console.log('\x1b[31m%s \x1b[31m%s\x1b[0m', '>', text),
@@ -10,7 +14,7 @@ export const print = {
 };
 
 
-const createServer = async (): Promise<Koa> => {
+const createKoaServer = async (): Promise<Koa> => {
   const koa: Koa = new Koa();
   koa.use(async (ctx: Koa.Context, next) => {
     ctx.set('Access-Control-Allow-Origin', '*');
@@ -51,12 +55,15 @@ const createServer = async (): Promise<Koa> => {
 // // app.use(router.allowedMethods());
 
 // app.listen(3000);
-module.exports = (async (): Promise<Server> => {
-  const app = await createServer();
-  return app.listen(9090, () => {
+module.exports = (async (): Promise<http.Server> => {
+  const app = await createKoaServer();
+
+  const httpServer = createServer(app.callback());
+  const io = setSocketIO(httpServer);
+
+  return httpServer.listen(9090, () => {
     // print.log(`server listening on ${CONSTANTS.PORT}, in ${CONSTANTS.ENV_LABEL} mode.`);
     print.log('server listening on 9090');
-
     // bootstrapAfter();
   });
 })();

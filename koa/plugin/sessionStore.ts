@@ -1,4 +1,3 @@
-import { Identity } from '~/types';
 import { v4 as uuid } from 'uuid';
 import connection from '../database/connection';
 import { RowDataPacket } from 'mysql2';

@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const {
     path, ...reqBody
   } = body;
-  console.log('reqPath', path, 'reqBody', JSON.stringify({
+  console.log('reqPath', 'reqBody', JSON.stringify({
     ...reqBody,
     requestID: uuid(),
   }));

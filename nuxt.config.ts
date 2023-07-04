@@ -3,11 +3,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 
 
 const viteInclude = [
-  'monaco-editor/esm/vs/language/json/json.worker',
-  'monaco-editor/esm/vs/language/css/css.worker',
-  'monaco-editor/esm/vs/language/html/html.worker',
-  'monaco-editor/esm/vs/language/typescript/ts.worker',
-  'monaco-editor/esm/vs/editor/editor.worker',
+  '@kangc/v-md-editor/lib/theme/vuepress.js',
 ];
 
 export default defineNuxtConfig({
@@ -33,6 +29,7 @@ export default defineNuxtConfig({
     'routes/**/*',
   ],
   nitro: {
+    timing: true,
     devProxy: {
       '/backend/': {
         target: 'http://127.0.0.1:9090/',
@@ -70,14 +67,14 @@ export default defineNuxtConfig({
     ],
     '@pinia-plugin-persistedstate/nuxt',
     'nuxt-monaco-editor',
+    'nuxt-socket-io',
     '@nuxt/devtools',
   ],
   monacoEditor: {
     // These are default values:
     locale: 'zh-hans',
     componentName: {
-      codeEditor: 'MonacoEditor',
-      diffEditor: 'MonacoDiffEditor'
+      codeEditor: 'MonacoEditorNuxt',
     }
   },
   components: [
@@ -87,7 +84,14 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
   ],
-
+  io: {
+    // module options
+    sockets: [{
+      name: 'code',
+      default: true,
+      url: 'http://localhost:9090'
+    }]
+  },
   vite: {
     plugins: [
       vueJsx()
@@ -102,8 +106,9 @@ export default defineNuxtConfig({
         process.env.NODE_ENV === 'development'
           ? [
             'naive-ui', 'vueuc', 'date-fns-tz/esm/formatInTimeZone',
+            ...viteInclude,
           ]
-          : []
+          : viteInclude,
     },
     esbuild: {
       jsxInject: 'import React from \'react\'',

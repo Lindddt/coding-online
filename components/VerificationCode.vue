@@ -11,8 +11,8 @@
 </template>
 
 <script setup lang='ts'>
-  import { NInput, NButton, c } from 'naive-ui';
-  import { ref, defineProps, watch } from 'vue';
+  import { NInput, NButton } from 'naive-ui';
+  import { ref, watch } from 'vue';
   import { sendMessage } from '~/utils';
 
   const props = defineProps<{

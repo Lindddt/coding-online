@@ -1,6 +1,6 @@
 import connection from '../database/connection';
 import email from '../util/sendmail';
-import * as Router from 'koa-router';
+import Router from 'koa-router';
 import * as Koa from 'koa';
 
 
