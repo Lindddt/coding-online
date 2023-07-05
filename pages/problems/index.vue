@@ -128,7 +128,7 @@
     }
     try {
       const res = await models.getProblemList({
-        startNum: (paginationIndex - 1) * paginationSize,
+        startNum: (paginationIndex - 1) * paginationSize + 1,
         endNum: (paginationIndex) * paginationSize,
       });
       problems.value = res.questionsList;

@@ -178,7 +178,7 @@
   //               outputExample: this.questions[i].output_data.toString()
   const formConfigList = ref<FormFieldConfig[]>(basicConfig);
   const onSubmit = async (formValue: Record<string, any>) => {
-
+    
   };
 
   const getUrl = () => {

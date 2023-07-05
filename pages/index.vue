@@ -9,6 +9,13 @@
       >
         测试
       </n-button>
+      <DataEditor
+        class="schema"
+        disabled-type
+        :value="tree"
+        lang="zh_CN"
+        custom
+      />
     </div>
   </div>
 </template>
@@ -26,6 +33,8 @@
   import { io } from 'socket.io-client';
   import { Socket } from 'socket.io';
   import { ServerToClientEvents, ClientToServerEvents } from '~/types';
+  import { DataEditor } from '#components';
+
   definePageMeta({
     layout: 'nav',
     componentKey: 'index'
@@ -40,19 +49,50 @@
   const showModal = ref(false);
   const nuxtApp = useNuxtApp();
   const socketNuxt = ref();
+  const tree = ref(
+    {
+      'root': {
+        'type': 'object',
+        'title': '条件',
+        'properties': {
+          'name': {
+            'type': 'string',
+            'title': '名称',
+            'maxLength': 10,
+            'minLength': 2
+          },
+          'appId': {
+            'type': 'integer',
+            'title': '应用ID'
+          },
+          'credate': {
+            'type': 'string',
+            'title': '创建日期',
+            'format': 'date'
+          }
+        },
+        'required': [
+          'name',
+          'appId',
+          'credate'
+        ]
+      }
+    }
+  );
+
   // const socket = ref<any>();
   onMounted(() => {
-    socketNuxt.value = nuxtApp.$nuxtSocket({
-      // nuxt-socket-io opts:
-      channel: '/code',
-      // socket.io-client opts:
-      reconnection: true,
-      transports: ['websocket', 'polling'],
+    // socketNuxt.value = nuxtApp.$nuxtSocket({
+    //   // nuxt-socket-io opts:
+    //   channel: '/code',
+    //   // socket.io-client opts:
+    //   reconnection: true,
+    //   transports: ['websocket', 'polling'],
 
-    });
-    socketNuxt.value.on('resend', (data: any) => {
-      console.log(data);
-    });
+    // });
+    // socketNuxt.value.on('resend', (data: any) => {
+    //   console.log(data);
+    // });
     // const socketO = io(':9090', {
     //   // 这里transports的默认值为["polling", "websocket"] 也就是优先使用polling， 但是polling再谷歌浏览器连接不上
     //   transports: ['websocket', 'polling'],
