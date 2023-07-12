@@ -125,7 +125,7 @@
 
 <style scoped less>
   /* @import "~/assets/stylus/style.css";
-                                              @import "~/assets/css/all.css";
+                                              
                                               @import "~/assets/css/code_page.css"; */
   .manaco {
     height: 500px;

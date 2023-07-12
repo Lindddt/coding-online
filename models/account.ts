@@ -71,7 +71,7 @@ export const logout = async () => {
 
 export const checkLogin = async (): Promise<{
   login: false;
-}| {
+} | {
   login: true;
   username: string;
   identity: Identity
@@ -79,6 +79,21 @@ export const checkLogin = async (): Promise<{
   const res = await requestBackend({
     path: 'account/login_check',
     body: {
+    },
+  });
+  return res;
+
+};
+
+export const checkAccount = async ({
+  email
+}: {
+  email: string;
+}): Promise<boolean> => {
+  const res = await requestBackend({
+    path: 'account/check',
+    body: {
+      email,
     },
   });
   return res;

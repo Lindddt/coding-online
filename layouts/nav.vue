@@ -418,6 +418,6 @@
 
 <style>
   @import "~/assets/stylus/style.css";
-  @import "~/assets/css/all.css";
+  
   @import "~/assets/css/nav.css";
 </style>

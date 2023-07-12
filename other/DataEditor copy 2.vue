@@ -601,7 +601,7 @@
   };
 </script>
 <style scoped>
-  .json-schemn-editor .row {
+  /* .json-schemn-editor .row {
     display: flex;
     margin: 12px;
   }
@@ -672,5 +672,5 @@
 
   .json-schemn-editor-advanced-modal .ant-advanced-search-form .ant-form-item .ant-form-item-control-wrapper {
     flex: 1;
-  }
+  } */
 </style>

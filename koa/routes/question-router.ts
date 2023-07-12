@@ -37,6 +37,7 @@ questionsRouter.post('/get_question_detail', validateSchemaJoi('post', getQuesti
     },
     errcode: 0,
   };
+  console.log(id);
   // sql语句
   const sql = 'select QID, Title, Time, Difficulty, Content, Remark, InputFormat, InputExample, OutputExample from Questions where QId = ?';
   const args = [id];
@@ -166,6 +167,7 @@ questionsRouter.post('/new_question', validateSchemaJoi('post', newQuestionSchem
   const inputFormat = body.inputFormat;
   const inputExample = body.inputExample;
   const outputExample = body.outputExample;
+  console.log(body, 'ctx.request.body');
   const response = {
     result: {
       'QID': -1,
@@ -177,22 +179,15 @@ questionsRouter.post('/new_question', validateSchemaJoi('post', newQuestionSchem
   const args = [title, difficulty, content, remark, inputFormat, inputExample, outputExample];
   try {
     const resDB_1 = await connection.dbQueryWithErrorCatch(sql, args);
-    console.log('damadmda');
-    console.log(resDB_1.result);
-    if (resDB_1.result.length === 0) {
-      console.log('damadmda');
-      response.errcode = -2;
-      ctx.response.body = ErrorObject[ErrorCode.DbNoResult];
-      return;
-    } else {
-      const resData = resDB_1.result[0] as RowDataPacket;
-      response.result.QID = resData.insertId;
-      // console.log(result);
-      // res.send(result);
-      // res.end();
-      ctx.response.body = response;
-    }
+    // console.log('damadmda');
+    // console.log(resDB_1.result[0]);
 
+    const resData = resDB_1.result as RowDataPacket;
+    response.result.QID = resData.insertId;
+    // console.log(resData);
+    // res.send(result);
+    // res.end();
+    ctx.response.body = response;
   } catch (error) {
     const err = error as any;
     if (err.errcode !== undefined) {

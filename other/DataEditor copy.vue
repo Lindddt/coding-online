@@ -578,7 +578,7 @@
   }
 </script>
 <style scoped>
-  .json-schema-editor .row {
+  /* .json-schema-editor .row {
     display: flex;
     margin: 12px;
   }
@@ -649,5 +649,5 @@
 
   .json-schema-editor-advanced-modal .ant-advanced-search-form .ant-form-item .ant-form-item-control-wrapper {
     flex: 1;
-  }
+  } */
 </style>

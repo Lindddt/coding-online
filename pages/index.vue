@@ -12,11 +12,14 @@
       <DataEditor
         class="schema"
         disabled-type
-        :value="tree"
+        :input-data="tree"
         lang="zh_CN"
         custom
       />
+      <ProblemSelect />
+
     </div>
+
   </div>
 </template>
 
@@ -33,7 +36,8 @@
   import { io } from 'socket.io-client';
   import { Socket } from 'socket.io';
   import { ServerToClientEvents, ClientToServerEvents } from '~/types';
-  import { DataEditor } from '#components';
+  import { DataEditor, JSONSchemaParser, ProblemSelect } from '#components';
+  import { JSONSchema, JSONSchemaType, } from '~/components';
 
   definePageMeta({
     layout: 'nav',
@@ -49,34 +53,27 @@
   const showModal = ref(false);
   const nuxtApp = useNuxtApp();
   const socketNuxt = ref();
-  const tree = ref(
+  const tree = ref<JSONSchema>(
     {
-      'root': {
-        'type': 'object',
-        'title': '条件',
-        'properties': {
-          'name': {
-            'type': 'string',
-            'title': '名称',
-            'maxLength': 10,
-            'minLength': 2
-          },
-          'appId': {
-            'type': 'integer',
-            'title': '应用ID'
-          },
-          'credate': {
-            'type': 'string',
-            'title': '创建日期',
-            'format': 'date'
-          }
+      'name': '根节点',
+      'type': JSONSchemaType.object,
+      'values': [
+        {
+          'name': '名称',
+          'type': JSONSchemaType.string,
+          'values': '名称',
         },
-        'required': [
-          'name',
-          'appId',
-          'credate'
-        ]
-      }
+        {
+          'name': 'appId',
+          'type': JSONSchemaType.number,
+          'values': 654321,
+        },
+        {
+          'name': 'credate',
+          'type': JSONSchemaType.string,
+          'values': '创建日期',
+        }
+      ]
     }
   );
 
@@ -121,14 +118,17 @@
   });
 
   const test = async () => {
-    const messageRxd = await socketNuxt.value.emit('sendMessage', '{ id: abc123 }');
-    console.log(messageRxd, 'messageRxd');
+    // const messageRxd = await socketNuxt.value.emit('sendMessage', '{ id: abc123 }');
+    // console.log(messageRxd, 'messageRxd', );
+    console.log('test', JSON.stringify(tree.value));
+    JSONSchemaParser(tree.value);
+    console.log('test', JSON.stringify(JSONSchemaParser(tree.value)));
   };
 
 </script>
 
 <style>
   @import "~/assets/stylus/style.css";
-  @import "~/assets/css/all.css";
+
   @import "~/assets/css/nav.css";
 </style>

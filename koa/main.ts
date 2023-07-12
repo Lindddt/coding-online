@@ -6,6 +6,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import http from 'http';
 import { setSocketIO } from './socket-io';
+import { cunstomLogger } from './logger/logs/log4js';
 
 export const print = {
   log: (text: string) => console.log('\x1b[37m%s \x1b[2m%s\x1b[0m', '>', text),
@@ -30,7 +31,7 @@ const createKoaServer = async (): Promise<Koa> => {
   koa.use(koaRouter.routes());
 
   koa.use(async (ctx: Koa.Context, next) => {
-    // console.log('ctxdsadasda', ctx.cookies.get('code.sess'), ctx.session?.test, JSON.stringify(ctx.response.header['set-cookie']));
+    cunstomLogger.logDebug(`path: ${ctx.request.path} || response: ${JSON.stringify(ctx.response.body)}`);
     await next();
   });
   // const app: Koa = useKoaServer<Koa>(koa, routingConfigs);

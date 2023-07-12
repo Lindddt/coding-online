@@ -1,13 +1,21 @@
 <template>
-  <div class="w">
+  <n-card
+    title="创建新问题"
+    class="bg-white w-11/12 items-center mx-auto p-4 rounded-md"
+    content-style="width: 100%;"
+  >
     <custom-form
       ref="formRef"
+      class="w-full"
       :form-list="formConfigList"
       :on-submit="onSubmit"
       confirm-text="创建"
       label-placement="left"
     />
-    <h3>题目：{{ title }}</h3>
+    <!-- <IODataEditor
+      item-key="dsadsad"
+    /> -->
+    <!-- <h3>题目：{{ title }}</h3>
     <h3>题目描述</h3>
     <p class="post_content">
       {{ content }}
@@ -54,8 +62,8 @@
         height="400px"
         @change="getUrl"
       />
-    </ClientOnly>
-  </div>
+    </ClientOnly> -->
+  </n-card>
 </template>
 
 <script setup lang='ts'>
@@ -64,15 +72,17 @@
   import { navigateTo, definePageMeta, useRoute } from '#imports';
   import qs from 'qs';
   import { sendMessage } from '~/utils';
-  import { FormFieldConfig, FormRef } from '~/components';
+  import { FormFieldConfig, FormRef, JSONSchema } from '~/components';
   import * as models from '~/models';
   // import CustomForm from '~/components/Form/CustomForm.vue';
-  import { CustomForm, MarkDownEditor } from '#components';
+  import { CustomForm, MarkDownEditor, IODataEditor } from '#components';
   // import { useFetch } from 'nuxt';
   import { Identity } from '~/types';
   import { useStore } from '~/store';
   import { storeToRefs } from 'pinia';
   const MarkDownEditorComp = resolveComponent('MarkDownEditor');
+  const IODataEditorComp = resolveComponent('IODataEditor');
+
 
   const route = useRoute();
   definePageMeta({
@@ -101,7 +111,7 @@
     },
     {
       key: 'difficulty',
-      value: '',
+      value: 'Middle',
       formType: 'select',
       label: '难度',
       placeholder: '请选择难度',
@@ -157,6 +167,18 @@
       }
     },
     {
+      key: 'ioData',
+      value: '',
+      label: '输入输出',
+      formType: 'custom',
+      render: ({ formData, changeData, validate }) => h(IODataEditorComp, {
+        'formData': formData,
+        'itemKey': 'ioData',
+        'changeData': changeData,
+        'validate': validate,
+      }),
+    },
+    {
       label: '备注',
       key: 'remark',
       formType: 'custom',
@@ -168,88 +190,43 @@
       }),
     },
   ];
-  // title: this.questions[i].title,
-  //   time: Date(),
-  //     difficulty: "Middle",
-  //       content: this.questions[i].content,
-  //         remark: this.questions[i].remark,
-  //           inputFormat: this.questions[i].input_format,
-  //             inputExample: this.questions[i].input_data.toString(),
-  //               outputExample: this.questions[i].output_data.toString()
   const formConfigList = ref<FormFieldConfig[]>(basicConfig);
   const onSubmit = async (formValue: Record<string, any>) => {
-    
+    console.log(formValue);
+    const inputData: JSONSchema[] = [];
+    const outputData: JSONSchema[] = [];
+    const ioList = JSON.parse(formValue.ioData);
+    ioList.forEach((item: any) => {
+      inputData.push(item.input);
+      outputData.push(item.output);
+    });
+
+    const res = await models.newQuestion({
+      title: formValue.title,
+      difficulty: formValue.difficulty,
+      content: formValue.content,
+      remark: formValue.remark,
+      inputFormat: formValue.inputFormat,
+      inputData: JSON.stringify(inputData),
+      outputData: JSON.stringify(outputData),
+    });
+    sendMessage.success('创建成功');
+    await navigateTo({
+      path: '/problems/problem_detail',
+      query: {
+        problemIndex: res,
+      }
+    });
   };
 
   const getUrl = () => {
     console.log(route.params);
   };
 
-
-  const getProblemDetail = async () => {
-    getUrl();
-    try {
-      const res = await models.getProblemDetail({ id: 1 });
-      inputExample.value = [res.InputExample];
-      id.value = res.QID;
-      title.value = res.Title;
-      outputExample.value = [res.OutputExample];
-      content.value = res.Content;
-      remark.value = res.Remark;
-      inputformat.value = res.InputFormat;
-    } catch (error) {
-
-    }
-  };
-  getProblemDetail();
-  // axios({
-  //   method: 'post',
-  //   url: '/question/get_question_detail?id=' + this.$route.query.problemIndex.toString(),
-  // })
-  //   .then(res => {
-  //     // 获取数据
-  //     if (res.data.errcode === 0) {
-
-  //       this.inputExample = [res.data.inputExample];
-  //       this.id = res.data.id;
-  //       this.title = res.data.title;
-  //       this.outputExample = [res.data.outputExample];
-  //       this.content = res.data.content;
-  //       this.remark = res.data.remark;
-  //       this.inputformat = res.data.inputFormat;
-  //       console.log(res.data);
-  //     }
-  //     else if (res.data.errcode === -2) {
-  //       Message.error('查询不到题目');
-  //     }
-  //     else if (res.data.errcode === -1) {
-  //       Message.error('未知错误');
-
-  //     }
-  //     else {
-  //       Message.error('未知错误');
-
-  //     }
-  //     /*
-  //   this.$message({
-  //     message:res.data,
-  //     type: 'success'
-  //   }); */
-  //   })
-  //   .catch(function (error) {
-  //     this.$message.error(error);
-  //   });
-  content.value = '';
-                        /*    this.$message({
-  message: this.$route.query.problemIndex,
-  type: 'success'
-  }); */
-
-
 </script>
 
 <style scoped>
   @import "~/assets/stylus/style.css";
-  @import "~/assets/css/all.css";
+
   @import "~/assets/css/problem_detail.css";
 </style>

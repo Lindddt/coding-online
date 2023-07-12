@@ -47,7 +47,7 @@
       </n-switch>
       <!-- radio -->
       <n-radio-group
-        v-else-if="item.formType === 'radio'"
+        v-if="item.formType === 'radio'"
         v-model:value="formValue[item.key]"
       >
         <n-space>
@@ -63,7 +63,7 @@
       </n-radio-group>
       <!-- select -->
       <n-select
-        v-else-if="item.formType === 'select'"
+        v-if="item.formType === 'select'"
         v-model:value="formValue[item.key]"
         :placeholder="item.placeholder"
         :options="item.options"
@@ -72,7 +72,7 @@
         :disabled="item.disabled"
         :virtual-scroll="item.virtualScroll"
       />
-      <template v-else-if="item.formType === 'custom'">
+      <template v-if="item.formType === 'custom'">
         <component
           :is="item['render']({ formData: formValue, changeData, validate })"
           :ref="(ref: any) => { formCustomItemRef[item.key] = ref; }"
@@ -92,7 +92,7 @@
 </template>
 
 <script setup lang='ts'>
-  import { FormInst, NForm, NFormItem, NInput, NButton, NSwitch, NRadio, NRadioGroup, FormValidationError, NSelect, NSpace } from 'naive-ui';
+  import { FormInst, NForm, NFormItem, NInput, NButton, NSwitch, NRadio, NRadioGroup, FormValidationError, NSelect } from 'naive-ui';
   import { defineComponent, reactive, ref } from 'vue';
   import { FormFieldConfig } from './FormType';
   import { sendMessage } from '~/utils';

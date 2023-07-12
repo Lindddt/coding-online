@@ -31,7 +31,6 @@ export const useMiddlewares = <T extends Koa>(app: T): T => {
     // rolling: true,
   }, app));
   app.use(async (ctx: Koa.Context, next) => {
-    cunstomLogger.logDebug(`'path: ${ctx.request.path}`);
     let n = ctx.session?.views || 0;
     // console.log('ctx', ctx.cookies.get('code.sess'), JSON.stringify(ctx.session), ctx.session?.save());
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -62,7 +61,11 @@ export const useMiddlewares = <T extends Koa>(app: T): T => {
     }
   });
   app.use(bodyParser());
-
+  app.use(async (ctx: Koa.Context, next) => {
+    cunstomLogger.logDebug(`'path: ${ctx.request.path} || request: ${JSON.stringify(ctx.request.body)}`);
+    await next();
+    return;
+  });
   return app;
 };
 

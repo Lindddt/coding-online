@@ -5,11 +5,16 @@ import '@kangc/v-md-editor/lib/style/base-editor.css';
 import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
 import '@kangc/v-md-editor/lib/theme/style/github.css';
 import hljs from 'highlight.js';
+import VMdPreview from '@kangc/v-md-editor/lib/preview';
 
 export default defineNuxtPlugin(nuxtApp => {
   // http://ckang1229.gitee.io/vue-markdown-editor/zh/api.html#methods
   VMdEditor.use(githubTheme, {
     Hljs: hljs,
   });
+  VMdPreview.use(githubTheme, {
+    Hljs: hljs,
+  });
   nuxtApp.vueApp.use(VMdEditor);
+  nuxtApp.vueApp.use(VMdPreview);
 });
